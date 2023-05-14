@@ -6,37 +6,58 @@ from weakref import WeakKeyDictionary
 from PodSixNet.Server import Server
 
 from ClientHandler import ClientHandler
-
+from PlayerInfo import PlayerInfo
 
 class GameServer(Server):
     channelClass = ClientHandler
+    idArray = [0, 0, 0]
+    playersInfoArray = []
 
     def __init__(self, *args, **kwargs):
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
         print('Server launched')
 
-    def AddPlayer(self, player):
-        self.players[player] = True
-        print("New Player: " + str(player.addr))
-        print("Connected players: ", [p for p in self.players])
+    def addPlayer(self, channel):
+        playerinfo = PlayerInfo(0,0, self.getNewId(), channel)
+        self.playersInfoArray.append({"id": playerinfo.id, "x": playerinfo.x, "y": playerinfo.y, "channel": playerinfo.channel})
 
-    def DelPlayer(self, player):
-        print("Deleting Player" + str(player.addr))
-        del self.players[player]
+    def getNewId(self):
+        for i in range(0, 2):
+            if self.idArray[i] == 0:
+                self.idArray[i] = 1
+                return i+1
 
-    def SendToAll(self, data):
-        [p.Message(data) for p in self.players]
+    def delPlayer(self, channel):
+        for i in range(0, len(self.playersInfoArray)):
+            if self.playersInfoArray[i]["channel"] == channel:
+                self.playersInfoArray.pop(i)
 
-    def SendPlayers(self):
-        self.SendToAll({"action": "players", "players": [p.addr for p in self.players]})
+    def sendAllPlayersDataToAll(self):
+        playersInfo = self.preparePlayerInfoArray()
+        for i in range(0, len(self.playersInfoArray)):
+            playerChannel = self.playersInfoArray[i]["channel"]
+            playerChannel.PlayersInfo(playersInfo)
+
+    def preparePlayerInfoArray(self):
+        playersInfo = []
+        for i in range(0, len(self.playersInfoArray)):
+            player = self.playersInfoArray[i]
+            playersInfo.append({"id": player["id"], "x": player["x"], "y": player["y"]})
+        return playersInfo
+
+    def sendInfoToPlayer(self, channel):
+        for i in range(0, len(self.playersInfoArray)):
+            if self.playersInfoArray[i]["channel"] == channel:
+                channel.PlayerInfo(self.playersInfoArray[i])
 
     def Connected(self, channel, addr):
         print(channel, "Channel connected")
-        self.AddPlayer(channel)
-        self.SendToAll({"action": "message", "message": str(addr) + " connected"})
+        self.addPlayer(channel)
+        self.sendInfoToPlayer(channel)
+        self.sendAllPlayersDataToAll()
 
-    def Launch(self):
+    def launch(self):
         while True:
             self.Pump()
             sleep(0.0001)
@@ -44,4 +65,4 @@ class GameServer(Server):
 
 # get command line argument of server, port
 s = GameServer(localaddr=('localhost', 3000))
-s.Launch()
+s.launch()

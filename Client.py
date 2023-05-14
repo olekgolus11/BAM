@@ -7,7 +7,7 @@ from sys import stdin, exit
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
 from Player import Player
-
+from PlayerInfo import PlayerInfo
 
 class Client(ConnectionListener):
     player = None
@@ -16,13 +16,21 @@ class Client(ConnectionListener):
 
     def __init__(self, host, port):
         self.Connect((host, port))
-        self.player = Player(1, 2, 2)
         print("Client started")
 
     def Network_message(self, data):
         print("got:", data['message'])
         connection.Send(data)
         connection.Pump()
+
+    def Network_playersInfo(self, data):
+        playersInfo = data["playersInfo"]
+        print("Players info: ", playersInfo)
+
+    def Network_playerInfo(self, data):
+        info = data["playerInfo"]
+        self.player = Player(info["x"], info["y"], info["id"])
+        print("My info: ", "id: ", self.player.playerId, "x: ", self.player.x, "y: ", self.player.y)
 
     def Network_connected(self, data):
         print("Connected to the server")
@@ -68,7 +76,7 @@ class Client(ConnectionListener):
         pygame.quit()
 
 
-client = Client("localhost", 3000)
+client = Client('localhost', 3000)
 client.setupWindow()
 client.run()
 

@@ -11,8 +11,15 @@ class ClientHandler(Channel):
         print(self, 'Client disconnected')
 
     def Network_message(self, data):
-        print(self, data)
+        print(self, "Network_message work!")
+
+    def PlayerInfo(self, playerData):
+        print("Send player info!")
+        self.Send({"action": "playerInfo", "playerInfo": {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"]}})
+
+    def PlayersInfo(self, data):
+        print("Send players info!")
+        self.Send({"action": "playersInfo", "playersInfo": data})
 
     def Message(self, data):
-        print(self, "Sending message")
         self.Send({"action": "message", "message": data})
