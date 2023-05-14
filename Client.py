@@ -23,7 +23,6 @@ class Client(ConnectionListener):
         print("got:", data['message'])
         connection.Send(data)
         connection.Pump()
-        # connection.Close()
 
     def Network_connected(self, data):
         print("Connected to the server")
@@ -49,7 +48,7 @@ class Client(ConnectionListener):
     def update(self):
         connection.Pump()
         self.Pump()
-        self.sendTestMessage()
+        # self.sendTestMessage()
         self.clock.tick(60)
 
     def drawPlayer(self):
