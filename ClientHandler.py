@@ -6,18 +6,14 @@ class ClientHandler(Channel):
 
     def __init__(self, *args, **kwargs):
         Channel.__init__(self, *args, **kwargs)
-        self.count = 0
-        self.times = []
 
     def Close(self):
         print(self, 'Client disconnected')
 
-    def Network_ping(self, data):
-        print(self, "ping %d round trip time was %f" % (data["count"], time() - self.times[data["count"]]))
-        self.Ping()
+    def Network_message(self, data):
+        print(self, data)
+        # self.Message()
 
-    def Ping(self):
-        print(self, "Ping:", self.count)
-        self.times.append(time())
-        self.Send({"action": "ping", "count": self.count})
-        self.count += 1
+    def Message(self):
+        print(self, "Sending message")
+        self.Send({"action": "message", "message": "hello"})

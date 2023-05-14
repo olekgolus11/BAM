@@ -7,19 +7,16 @@ from sys import stdin, exit
 from PodSixNet.Connection import connection, ConnectionListener
 
 
-class LagTimeClient(ConnectionListener):
+class Client(ConnectionListener):
     def __init__(self, host, port):
         self.Connect((host, port))
-        print("LagTimeClient started")
+        print("Client started")
 
-    def Network_ping(self, data):
-        print("got:", data)
-        if data["count"] == 10:
-            connection.Close()
-        else:
-            connection.Send(data)
+    def Network_message(self, data):
+        print("got:", data['message'])
+        connection.Send(data)
+        connection.Close()
 
-    # built in stuff
 
     def Network_connected(self, data):
         print("Connected to the server")
@@ -33,7 +30,7 @@ class LagTimeClient(ConnectionListener):
         exit()
 
 
-c = LagTimeClient("localhost", 3000)
+c = Client("localhost", 3000)
 while 1:
     connection.Pump()
     c.Pump()

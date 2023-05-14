@@ -16,7 +16,7 @@ class GameServer(Server):
 
     def Connected(self, channel, addr):
         print(channel, "Channel connected")
-        channel.Ping()
+        channel.Message()
 
     def Launch(self):
         while True:
