@@ -1,33 +1,10 @@
 from __future__ import print_function
 
-from time import sleep, localtime
-from weakref import WeakKeyDictionary
-from time import time
-import sys
+from time import sleep
 
 from PodSixNet.Server import Server
-from PodSixNet.Channel import Channel
 
-
-class LagTimeChannel(Channel):
-
-    def __init__(self, *args, **kwargs):
-        Channel.__init__(self, *args, **kwargs)
-        self.count = 0
-        self.times = []
-
-    def Close(self):
-        print(self, 'Client disconnected')
-
-    def Network_ping(self, data):
-        print(self, "ping %d round trip time was %f" % (data["count"], time() - self.times[data["count"]]))
-        self.Ping()
-
-    def Ping(self):
-        print(self, "Ping:", self.count)
-        self.times.append(time())
-        self.Send({"action": "ping", "count": self.count})
-        self.count += 1
+from ClientHandler import LagTimeChannel
 
 
 class LagTimeServer(Server):
