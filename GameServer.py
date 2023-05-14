@@ -6,6 +6,7 @@ from weakref import WeakKeyDictionary
 from PodSixNet.Server import Server
 
 from ClientHandler import ClientHandler
+from Map import Map
 from PlayerInfo import PlayerInfo
 
 class GameServer(Server):
@@ -17,6 +18,7 @@ class GameServer(Server):
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
         print('Server launched')
+        self.map = Map
 
     def addPlayer(self, channel):
         playerinfo = PlayerInfo(0,0, self.getNewId(), channel)
@@ -56,6 +58,8 @@ class GameServer(Server):
         self.addPlayer(channel)
         self.sendInfoToPlayer(channel)
         self.sendAllPlayersDataToAll()
+        print(self.map.board)
+        channel.Send({"action": "board", "board": self.map.board})
 
     def launch(self):
         while True:

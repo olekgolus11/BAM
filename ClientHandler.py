@@ -23,3 +23,4 @@ class ClientHandler(Channel):
 
     def Message(self, data):
         self.Send({"action": "message", "message": data})
+

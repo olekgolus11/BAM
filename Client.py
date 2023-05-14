@@ -31,6 +31,9 @@ class Client(ConnectionListener):
         info = data["playerInfo"]
         self.player = Player(info["x"], info["y"], info["id"])
         print("My info: ", "id: ", self.player.playerId, "x: ", self.player.x, "y: ", self.player.y)
+    def Network_board(self, data):
+        print("got:", data['board'])
+        connection.Pump()
 
     def Network_connected(self, data):
         print("Connected to the server")
