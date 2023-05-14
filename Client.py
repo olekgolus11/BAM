@@ -16,7 +16,7 @@ class Client(ConnectionListener):
 
     def __init__(self, host, port):
         self.Connect((host, port))
-        self.player = Player(1, 2)
+        self.player = Player(1, 2, 1)
         print("Client started")
 
     def Network_message(self, data):
