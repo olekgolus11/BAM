@@ -2,7 +2,7 @@ from PodSixNet.Channel import Channel
 from time import time
 
 
-class LagTimeChannel(Channel):
+class ClientHandler(Channel):
 
     def __init__(self, *args, **kwargs):
         Channel.__init__(self, *args, **kwargs)

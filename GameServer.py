@@ -4,11 +4,11 @@ from time import sleep
 
 from PodSixNet.Server import Server
 
-from ClientHandler import LagTimeChannel
+from ClientHandler import ClientHandler
 
 
 class LagTimeServer(Server):
-    channelClass = LagTimeChannel
+    channelClass = ClientHandler
 
     def __init__(self, *args, **kwargs):
         Server.__init__(self, *args, **kwargs)
