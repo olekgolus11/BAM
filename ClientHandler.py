@@ -12,8 +12,7 @@ class ClientHandler(Channel):
 
     def Network_message(self, data):
         print(self, data)
-        # self.Message()
 
-    def Message(self):
+    def Message(self, data):
         print(self, "Sending message")
-        self.Send({"action": "message", "message": "hello"})
+        self.Send({"action": "message", "message": data})
