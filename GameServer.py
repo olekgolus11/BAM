@@ -7,7 +7,7 @@ from PodSixNet.Server import Server
 from ClientHandler import ClientHandler
 
 
-class LagTimeServer(Server):
+class GameServer(Server):
     channelClass = ClientHandler
 
     def __init__(self, *args, **kwargs):
@@ -25,5 +25,5 @@ class LagTimeServer(Server):
 
 
 # get command line argument of server, port
-s = LagTimeServer(localaddr=('localhost', 3000))
+s = GameServer(localaddr=('localhost', 3000))
 s.Launch()
