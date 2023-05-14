@@ -15,6 +15,7 @@ class Client(ConnectionListener):
     def Network_message(self, data):
         print("got:", data['message'])
         connection.Send(data)
+        connection.Pump()
         connection.Close()
 
 
