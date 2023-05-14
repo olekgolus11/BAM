@@ -25,5 +25,5 @@ class GameServer(Server):
 
 
 # get command line argument of server, port
-s = GameServer(localaddr=('localhost', 3000))
+s = GameServer(localaddr=('192.168.18.35', 3000))
 s.Launch()

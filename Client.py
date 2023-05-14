@@ -16,7 +16,7 @@ class Client(ConnectionListener):
         print("got:", data['message'])
         connection.Send(data)
         connection.Pump()
-        connection.Close()
+        # connection.Close()
 
 
     def Network_connected(self, data):
@@ -31,8 +31,10 @@ class Client(ConnectionListener):
         exit()
 
 
-c = Client("localhost", 3000)
+c = Client("192.168.18.35", 3000)
+
 while 1:
     connection.Pump()
     c.Pump()
-    sleep(0.001)
+    connection.Send('Connection test')
+    sleep(1)
