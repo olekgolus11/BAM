@@ -51,12 +51,18 @@ class Client(ConnectionListener):
         self.Pump()
         self.sendTestMessage()
         self.clock.tick(60)
-        pygame.display.update()
 
-    def launchWindow(self):
+    def drawPlayer(self):
+        self.player.draw(self.screen)
+        pygame.display.update()
+        self.screen.fill('black')
+
+    def run(self):
         running = True
         while running:
             self.update()
+            self.player.move()
+            self.drawPlayer()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -65,5 +71,5 @@ class Client(ConnectionListener):
 
 client = Client("192.168.18.35", 3000)
 client.setupWindow()
-client.launchWindow()
+client.run()
 
