@@ -9,6 +9,7 @@ class Direction(Enum):
     LEFT = 'left'
     RIGHT = 'right'
 
+from BombsHandler import BombsHandler
 
 class MoveState(Enum):
     STANDING = 'standing'
@@ -29,6 +30,8 @@ class Player:
         self.speed = 3
         self.frameState = 0
         self.fullMoveTimeframe = constants.FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
+        self.bombsHandler = BombsHandler()
+
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -49,10 +52,15 @@ class Player:
             self.y += self.speed
             self.playerDirection = Direction.DOWN
         self.updatePlayerMoveState()
+        if keys[pygame.K_SPACE]:
+            self.bombsHandler.addBomb(self.x, self.y)
+        else:
+            self.bombsHandler.isBombPlantedThisRound = False
 
     def draw(self, win):
         image = self.getPlayerImage()
         win.blit(image, (self.x, self.y))
+        self.bombsHandler.printBombs(win)
 
     def getPlayerImage(self):
         return pygame.image.load(self.getImagePath())

@@ -13,7 +13,8 @@ class ClientHandler(Channel):
         print(self, "Network_message work!")
 
     def PlayerInfo(self, playerData):
-        self.Send({"action": "playerInfo", "playerInfo": {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"]}})
+        self.Send({"action": "playerInfo",
+                   "playerInfo": {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"]}})
 
     def PlayersInfo(self, data):
         self.Send({"action": "playersInfo", "playersInfo": data})
@@ -21,3 +22,7 @@ class ClientHandler(Channel):
     def Message(self, data):
         self.Send({"action": "message", "message": data})
 
+    def Network_newBombFromPlayer(self, data):
+        for i in range(0, len(self._server.playersInfoArray)):
+            playerChannel = self._server.playersInfoArray[i]["channel"]
+            playerChannel.Send({"action": "bombFromServer", "bomb": data["bomb"]})

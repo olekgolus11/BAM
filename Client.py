@@ -45,6 +45,9 @@ class Client(ConnectionListener):
         print('Server disconnected')
         exit()
 
+    def Network_bombFromServer(self, data):
+        self.player.bombsHandler.dictionaryToBomb(data["bomb"])
+
     def setupWindow(self):
         pygame.init()
         self.screen = pygame.display.set_mode((1280, 720))
@@ -69,6 +72,9 @@ class Client(ConnectionListener):
     def drawBoard(self):
         self.map.draw()
 
+    def sendBombToServer(self, bomb):
+        connection.Send({"action": "newBombFromPlayer", "bomb": self.player.bombsHandler.bombToDictionary(bomb)})
+
     def run(self):
         running = True
         while running:
@@ -76,6 +82,10 @@ class Client(ConnectionListener):
             self.player.move()
             self.drawPlayer()
             self.drawBoard()
+            self.player.bombsHandler.updateBombTimers()
+            if self.player.bombsHandler.bombPlantedThisRound:
+                self.sendBombToServer(self.player.bombsHandler.bombPlantedThisRound)
+                self.player.bombsHandler.bombPlantedThisRound = 0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
