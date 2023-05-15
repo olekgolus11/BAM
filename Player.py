@@ -3,9 +3,9 @@ import constants
 from Map.MapClient import MapClient
 from constants import TILE_SIZE
 from utilities import getTileCoordinates
-from BombsHandler import BombsHandler
 from utilities import Direction
 from utilities import MoveState
+from BombsHandler import BombsHandler
 
 
 class Player:
@@ -21,10 +21,11 @@ class Player:
         self.x = x
         self.y = y
         self.speed = 3
+        self.alive = True
         self.frameState = 0
         self.fullMoveTimeframe = constants.FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
-        self.bombsHandler = BombsHandler()
-        self.map = MapClient(self.screen)
+        self.map = MapClient(screen)
+        self.bombsHandler = BombsHandler(self.map)
         self.shouldPlayerMove = True
 
     def draw(self, imagePath):
@@ -38,6 +39,11 @@ class Player:
         self.handlePlayerMovement(keyPressed)
         self.updatePlayerAnimationState()
         self.handlePlayerBomb(keyPressed)
+
+    def isPlayerHit(self):
+        self.bombsHandler.updatePlayerTilePosition(self.x, self.y)
+        if self.bombsHandler.didBombExplodeOnPlayer() is True:
+            self.alive = False
 
     def handlePlayerMovement(self, keyPressed):
         playerShouldMoveInDirection = self.getDirectionFromKey(keyPressed)
@@ -167,6 +173,8 @@ class Player:
 
     def getImagePath(self):
         relativePath = f"assets/player/char{self.playerId}_"
+        if self.alive is False:
+            return f"{relativePath}grave.png"
         runningImagePathValue = f"_{self.playerRunningImagePathValue}" if self.playerRunningImagePathValue else ""
         if self.playerDirection is None or self.playerMoveState is None:
             return f"{relativePath}front_standing.png"
