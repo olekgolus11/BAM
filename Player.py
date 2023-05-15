@@ -97,7 +97,7 @@ class Player:
                 self.characterImg = self.CHAR_FRONT_STANDING
                 self.state += 1
             elif self.state >= 30 and self.state < 40:
-                self.characterImg = self.CHAR_BACK_RUNNING_2
+                self.characterImg = self.CHAR_FRONT_RUNNING_2
                 self.state += 1
             elif self.state >= 40:
                 self.state = 0
