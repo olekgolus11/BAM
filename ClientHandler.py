@@ -1,7 +1,6 @@
 from PodSixNet.Channel import Channel
 from time import time
 
-
 class ClientHandler(Channel):
 
     def __init__(self, *args, **kwargs):
@@ -23,3 +22,7 @@ class ClientHandler(Channel):
 
     def Message(self, data):
         self.Send({"action": "message", "message": data})
+
+    def Network_newBombFromPlayer(self, data):
+        for p in self._server.players:
+            p.Send({"action": "bombFromServer", "bomb": data["bomb"]})

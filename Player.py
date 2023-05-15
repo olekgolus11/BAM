@@ -1,5 +1,5 @@
 import pygame
-
+from Bomb import Bomb
 
 class Player:
     CHAR_FRONT_STANDING = None
@@ -24,6 +24,13 @@ class Player:
         self.state = 0
         self.createImages()
         self.characterImg = self.CHAR_FRONT_STANDING
+        self.everyPlayersBombs = []
+        self.bombPlantedThisRound = 0
+        self.myBombsTimers = []
+        self.maxBombsPlanted = 3
+        self.myBombsPlanted = 0
+        self.bombPower = 3
+        self.bombPlacedThisRound = False
 
     def createImages(self):
         self.CHAR_FRONT_STANDING = "assets/player/char" + str(self.playerId) + "_front_standing.png"
@@ -43,6 +50,12 @@ class Player:
     def draw(self, win):
         img = pygame.image.load(self.characterImg)
         win.blit(img, (self.x, self.y))
+        for bomb in self.everyPlayersBombs:
+            if bomb.timer >= 160:
+                bomb.__del__()
+                self.everyPlayersBombs.remove(bomb)
+            else:
+                bomb.plant(win)
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -101,4 +114,37 @@ class Player:
                 self.state += 1
             elif self.state >= 40:
                 self.state = 0
+
+        if keys[pygame.K_SPACE]:
+            if self.myBombsPlanted < self.maxBombsPlanted and self.bombPlacedThisRound == False:
+                self.myBombsTimers.append(0)
+                self.bombPlantedThisRound = Bomb(self.x, self.y, self.bombPower)
+                self.bombPlacedThisRound = True
+                self.myBombsPlanted += 1
+        else:
+            self.bombPlacedThisRound = False
+
+    def dictionaryToBomb(self, dictBomb):
+        x = dictBomb["x"]
+        y = dictBomb["y"]
+        power = dictBomb["power"]
+        self.everyPlayersBombs.append(Bomb(x, y, power))
+
+    def bombToDictionary(self, bomb):
+        return {"x": bomb.x, "y": bomb.y, "power": bomb.power}
+
+    def updateBombTimers(self):
+        index = -1
+        toRemove = False
+        for i in range(0, len(self.myBombsTimers)):
+            print(i)
+            if self.myBombsTimers[i] < 160:
+                self.myBombsTimers[i] += 1
+            else:
+                index = i
+                toRemove = True
+        if toRemove:
+            self.myBombsTimers.pop(index)
+            self.myBombsPlanted -= 1
+
 
