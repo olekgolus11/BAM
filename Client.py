@@ -68,7 +68,7 @@ class Client(ConnectionListener):
         pygame.quit()
 
 
-client = Client("192.168.18.35", 3000)
+client = Client("localhost", 3000)
 client.setupWindow()
 client.run()
 
