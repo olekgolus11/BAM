@@ -22,7 +22,8 @@ class Player:
         self.y = y
         self.speed = 3
         self.state = 0
-        self.characterImg = 'assets/player/char1_front_standing.png'
+        self.createImages()
+        self.characterImg = self.CHAR_FRONT_STANDING
 
     def createImages(self):
         self.CHAR_FRONT_STANDING = "assets/player/char" + str(self.playerId) + "_front_standing.png"
@@ -48,10 +49,10 @@ class Player:
         if keys[pygame.K_LEFT]:
             self.x -= self.speed
             if self.state >= 0 and self.state < 10:
-                self.characterImg = 'assets/player/char1_left_standing.png'
+                self.characterImg = self.CHAR_LEFT_STANDING
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = 'assets/player/char1_left_running.png'
+                self.characterImg = self.CHAR_LEFT_RUNNING
                 self.state += 1
             else:
                 self.state = 0
@@ -59,10 +60,10 @@ class Player:
         elif keys[pygame.K_RIGHT]:
             self.x += self.speed
             if self.state >= 0 and self.state < 10:
-                self.characterImg = 'assets/player/char1_right_standing.png'
+                self.characterImg = self.CHAR_RIGHT_STANDING
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = 'assets/player/char1_right_running.png'
+                self.characterImg = self.CHAR_RIGHT_RUNNING
                 self.state += 1
             else:
                 self.state = 0
@@ -70,16 +71,16 @@ class Player:
         if keys[pygame.K_UP]:
             self.y -= self.speed
             if self.state >= 0 and self.state < 10:
-                self.characterImg = 'assets/player/char1_back_standing.png'
+                self.characterImg = self.CHAR_BACK_STANDING
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = 'assets/player/char1_back_running_1.png'
+                self.characterImg = self.CHAR_BACK_RUNNING_1
                 self.state += 1
             elif self.state >= 20 and self.state < 30:
-                self.characterImg = 'assets/player/char1_back_standing.png'
+                self.characterImg = self.CHAR_BACK_STANDING
                 self.state += 1
             elif self.state >= 30 and self.state < 40:
-                self.characterImg = 'assets/player/char1_back_running_2.png'
+                self.characterImg = self.CHAR_BACK_RUNNING_2
                 self.state += 1
             elif self.state >= 40:
                 self.state = 0
@@ -87,16 +88,16 @@ class Player:
         elif keys[pygame.K_DOWN]:
             self.y += self.speed
             if self.state >= 0 and self.state < 10:
-                self.characterImg = 'assets/player/char1_front_standing.png'
+                self.characterImg = self.CHAR_FRONT_STANDING
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = 'assets/player/char1_front_running_1.png'
+                self.characterImg = self.CHAR_FRONT_RUNNING_1
                 self.state += 1
             elif self.state >= 20 and self.state < 30:
-                self.characterImg = 'assets/player/char1_front_standing.png'
+                self.characterImg = self.CHAR_FRONT_STANDING
                 self.state += 1
             elif self.state >= 30 and self.state < 40:
-                self.characterImg = 'assets/player/char1_front_running_2.png'
+                self.characterImg = self.CHAR_FRONT_RUNNING_2
                 self.state += 1
             elif self.state >= 40:
                 self.state = 0
