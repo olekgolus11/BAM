@@ -1,5 +1,4 @@
 from PodSixNet.Channel import Channel
-from time import time
 
 
 class ClientHandler(Channel):
@@ -14,11 +13,9 @@ class ClientHandler(Channel):
         print(self, "Network_message work!")
 
     def PlayerInfo(self, playerData):
-        print("Send player info!")
         self.Send({"action": "playerInfo", "playerInfo": {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"]}})
 
     def PlayersInfo(self, data):
-        print("Send players info!")
         self.Send({"action": "playersInfo", "playersInfo": data})
 
     def Message(self, data):

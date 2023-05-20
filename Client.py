@@ -1,13 +1,10 @@
 from __future__ import print_function
-
 from sys import exit
-
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
-
 from Map.MapClient import MapClient
 from Player import Player
-from PlayerInfo import PlayerInfo
+
 
 class Client(ConnectionListener):
     player = None
@@ -32,8 +29,8 @@ class Client(ConnectionListener):
         info = data["playerInfo"]
         self.player = Player(info["x"], info["y"], info["id"])
         print("My info: ", "id: ", self.player.playerId, "x: ", self.player.x, "y: ", self.player.y)
+
     def Network_board(self, data):
-        print("got:", data['board'])
         self.map.updateBoard(data['board'])
         connection.Pump()
 
@@ -62,7 +59,6 @@ class Client(ConnectionListener):
     def update(self):
         connection.Pump()
         self.Pump()
-        # self.sendTestMessage()
         self.clock.tick(60)
 
     def drawPlayer(self):

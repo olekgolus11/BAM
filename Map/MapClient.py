@@ -1,9 +1,13 @@
 import pygame
-
 from Map.Map import Map
 
 
 class MapClient(Map):
+    FLOOR = pygame.image.load("assets/blocks/floor.png")
+    WALL = pygame.image.load("assets/blocks/wall.png")
+    TOP_WALL = pygame.image.load("assets/blocks/top_wall.png")
+    CRATE = pygame.image.load("assets/blocks/crate.png")
+
     def __init__(self, screen):
         self.screen = screen
 
@@ -11,15 +15,17 @@ class MapClient(Map):
         self.board = board
 
     def getBlock(self, y, x):
-        value = self.board[y][x]
-        if value == 0:
-            return 'white'
-        elif value == 1:
-            return 'black'
+        tileValue = self.board[y][x]
+        if tileValue == 0:
+            return self.FLOOR
+        elif tileValue == 1:
+            return self.WALL
+        elif tileValue == 1.5:
+            return self.TOP_WALL
         else:
-            return 'red'
+            return self.CRATE
 
     def draw(self):
         for row in range(self.HEIGHT):
             for col in range(self.WIDTH):
-                pygame.draw.rect(self.screen, self.getBlock(row, col), (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
+                self.screen.blit(self.getBlock(row, col), (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE))
