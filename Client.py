@@ -33,8 +33,6 @@ class Client(ConnectionListener):
                     player.x = dictElement["x"]
                     player.y = dictElement["y"]
 
-        print("Players info: ", playersInfo)
-
     def Network_playerInfo(self, data):
         info = data["playerInfo"]
         self.player = Player(info["x"], info["y"], info["id"], self.screen)

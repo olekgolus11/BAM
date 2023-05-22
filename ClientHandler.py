@@ -13,7 +13,6 @@ class ClientHandler(Channel):
         print(self, "Network_message work!")
 
     def Network_playerInfo(self, data):
-        print(self, "Data about a player: ", data["playerInfo"])
         playerInfo = data["playerInfo"]
         for player in self._server.playersInfoArray:
             if player["id"] == playerInfo["id"]:
