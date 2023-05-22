@@ -1,18 +1,16 @@
 from __future__ import print_function
-
-import sys
-from time import sleep
-from sys import stdin, exit
-
+from sys import exit
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
+from Map.MapClient import MapClient
 from Player import Player
-from PlayerInfo import PlayerInfo
+
 
 class Client(ConnectionListener):
     player = None
     screen = None
     clock = None
+    map = None
 
     def __init__(self, host, port):
         self.Connect((host, port))
@@ -32,6 +30,10 @@ class Client(ConnectionListener):
         self.player = Player(info["x"], info["y"], info["id"])
         print("My info: ", "id: ", self.player.playerId, "x: ", self.player.x, "y: ", self.player.y)
 
+    def Network_board(self, data):
+        self.map.updateBoard(data['board'])
+        connection.Pump()
+
     def Network_connected(self, data):
         print("Connected to the server")
 
@@ -48,6 +50,7 @@ class Client(ConnectionListener):
         self.screen = pygame.display.set_mode((1280, 720))
         self.screen.fill('black')
         self.clock = pygame.time.Clock()
+        self.map = MapClient(self.screen)
         pygame.display.set_caption("BAM!")
 
     def sendTestMessage(self):
@@ -56,7 +59,6 @@ class Client(ConnectionListener):
     def update(self):
         connection.Pump()
         self.Pump()
-        # self.sendTestMessage()
         self.clock.tick(60)
 
     def drawPlayer(self):
@@ -64,19 +66,22 @@ class Client(ConnectionListener):
         pygame.display.update()
         self.screen.fill('black')
 
+    def drawBoard(self):
+        self.map.draw()
+
     def run(self):
         running = True
         while running:
             self.update()
             self.player.move()
             self.drawPlayer()
+            self.drawBoard()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
         pygame.quit()
 
 
-client = Client('localhost', 3000)
+client = Client("localhost", 3000)
 client.setupWindow()
 client.run()
-

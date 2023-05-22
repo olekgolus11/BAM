@@ -1,12 +1,11 @@
 from __future__ import print_function
-
 from time import sleep
 from weakref import WeakKeyDictionary
-
 from PodSixNet.Server import Server
-
 from ClientHandler import ClientHandler
 from PlayerInfo import PlayerInfo
+from Map.MapServer import MapServer
+
 
 class GameServer(Server):
     channelClass = ClientHandler
@@ -17,6 +16,7 @@ class GameServer(Server):
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
         print('Server launched')
+        self.map = MapServer
 
     def addPlayer(self, channel):
         playerinfo = PlayerInfo(0,0, self.getNewId(), channel)
@@ -56,6 +56,8 @@ class GameServer(Server):
         self.addPlayer(channel)
         self.sendInfoToPlayer(channel)
         self.sendAllPlayersDataToAll()
+        print(self.map.board)
+        channel.Send({"action": "board", "board": self.map.board})
 
     def launch(self):
         while True:
