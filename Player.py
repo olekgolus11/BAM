@@ -103,7 +103,10 @@ class Player:
             elif self.state >= 40:
                 self.state = 0
 
-            self.bombsHandler.addBomb(keys, self.x, self.y)
+        if keys[pygame.K_SPACE]:
+            self.bombsHandler.addBomb(self.x, self.y)
+        else:
+            self.bombsHandler.isBombPlantedThisRound = False
 
 
 

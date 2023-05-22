@@ -1,5 +1,5 @@
 import pygame
-from Constants import *
+from constants import *
 
 class Bomb:
     def __init__(self, x, y, power):
