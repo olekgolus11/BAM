@@ -77,7 +77,7 @@ class Client(ConnectionListener):
     def drawAllPlayers(self):
         for player in self.playersArray:
             player.draw(self.screen)
-            pygame.display.update()
+        pygame.display.update()
 
     def updatePlayerMap(self):
         self.player.map.updateBoard(self.map.board)
