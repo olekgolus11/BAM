@@ -1,6 +1,6 @@
 import pygame
 from enum import Enum
-
+import contants
 
 # class syntax
 class Direction(Enum):
@@ -26,40 +26,6 @@ class Player:
         self.y = y
         self.speed = 3
         self.stateFrame = 0
-
-    def getImagePath(self, direction: Direction, moveState: MoveState, frame=None):
-        relativePath = "assets/player/char" + str(self.playerId) + "_"
-        runningImagePathValue = ""
-        if frame:
-            runningImagePathValue = "_" + str(frame)
-
-        if direction is None or moveState is None:
-            return relativePath + "front_standing.png"
-        else:
-            return relativePath + direction.value + "_" + moveState.value + runningImagePathValue + ".png"
-
-    def getImageFromPath(self, path):
-        return pygame.image.load(path)
-
-    def draw(self, win):
-        imagePath = self.getImagePath(self.playerDirection, self.playerMoveState, self.playerRunningImagePathValue)
-        img = self.getImageFromPath(imagePath)
-        win.blit(img, (self.x, self.y))
-
-
-    def setMoveState(self):
-        if 10 <= self.stateFrame < 20 or 30 <= self.stateFrame < 40:
-            self.playerMoveState = MoveState.RUNNING
-            if self.playerDirection == Direction.UP or self.playerDirection == Direction.DOWN:
-                self.playerRunningImagePathValue = 1 if 10 <= self.stateFrame < 20 else 2
-            else:
-                self.playerRunningImagePathValue = None
-        else:
-            self.playerMoveState = MoveState.STANDING
-            self.playerRunningImagePathValue = None
-            if self.stateFrame >= 40:
-                self.stateFrame = 0
-
     def move(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -79,3 +45,36 @@ class Player:
             self.y += self.speed
             self.playerDirection = Direction.DOWN
         self.setMoveState()
+
+    def draw(self, win):
+        image = self.getPlayerImage()
+        win.blit(image, (self.x, self.y))
+
+    def getPlayerImage(self):
+        return self.getImageFromPath(self.getImagePath())
+
+    def getImagePath(self):
+        relativePath = f"assets/player/char{self.playerId}_"
+        runningImagePathValue = f"_{self.playerRunningImagePathValue}" if self.playerRunningImagePathValue else ""
+
+        if self.playerDirection is None or self.playerMoveState is None:
+            return f"{relativePath}front_standing.png"
+        else:
+            return f"{relativePath}{self.playerDirection.value}_{self.playerMoveState.value}{runningImagePathValue}.png"
+
+    def getImageFromPath(self, path):
+        return pygame.image.load(path)
+
+    def setMoveState(self):
+        if 10 <= self.stateFrame < 20 or 30 <= self.stateFrame < 40:
+            self.playerMoveState = MoveState.RUNNING
+            if self.playerDirection == Direction.UP or self.playerDirection == Direction.DOWN:
+                self.playerRunningImagePathValue = 1 if 10 <= self.stateFrame < 20 else 2
+            else:
+                self.playerRunningImagePathValue = None
+        else:
+            self.playerMoveState = MoveState.STANDING
+            self.playerRunningImagePathValue = None
+            if self.stateFrame >= 40:
+                self.stateFrame = 0
+
