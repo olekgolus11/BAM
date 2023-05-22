@@ -28,7 +28,7 @@ class Player:
         self.y = y
         self.speed = 3
         self.frameState = 0
-        self.fullMoveTimeframe = contants.FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
+        self.fullMoveTimeframe = constants.FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -48,7 +48,7 @@ class Player:
             self.frameState += 1
             self.y += self.speed
             self.playerDirection = Direction.DOWN
-        self.setMoveState()
+        self.updatePlayerMoveState()
 
     def draw(self, win):
         image = self.getPlayerImage()
@@ -60,29 +60,31 @@ class Player:
     def getImagePath(self):
         relativePath = f"assets/player/char{self.playerId}_"
         runningImagePathValue = f"_{self.playerRunningImagePathValue}" if self.playerRunningImagePathValue else ""
-
         if self.playerDirection is None or self.playerMoveState is None:
             return f"{relativePath}front_standing.png"
         else:
             return f"{relativePath}{self.playerDirection.value}_{self.playerMoveState.value}{runningImagePathValue}.png"
 
-    def setMoveState(self):
-        timeframe = self.fullMoveTimeframe
+    def updatePlayerMoveState(self):
         if self.shouldPlayerBeInRunningState():
             self.playerMoveState = MoveState.RUNNING
-            if self.playerDirection == Direction.UP or self.playerDirection == Direction.DOWN:
-                self.playerRunningImagePathValue = 1 if timeframe * 0.25 <= self.frameState < timeframe * 0.5 else 2
-            else:
-                self.playerRunningImagePathValue = None
+            self.updatePlayerRunningImagePathValue()
         else:
             self.playerMoveState = MoveState.STANDING
             self.playerRunningImagePathValue = None
-            if self.frameState >= timeframe:
+            if self.frameState >= self.fullMoveTimeframe:
                 self.frameState = 0
 
     def shouldPlayerBeInRunningState(self):
-        timeframe = self.fullMoveTimeframe
-        if timeframe * 0.25 <= self.frameState < timeframe * 0.5 or timeframe * 0.75 <= self.frameState < timeframe:
+        frame = self.fullMoveTimeframe
+        if frame * 0.25 <= self.frameState < frame * 0.5 or frame * 0.75 <= self.frameState < frame:
             return True
         else:
             return False
+
+    def updatePlayerRunningImagePathValue(self):
+        frame = self.fullMoveTimeframe
+        if self.playerDirection == Direction.UP or self.playerDirection == Direction.DOWN:
+            self.playerRunningImagePathValue = 1 if frame * 0.25 <= self.frameState < frame * 0.5 else 2
+        else:
+            self.playerRunningImagePathValue = None
