@@ -16,19 +16,9 @@ class MoveState(Enum):
 
 
 class Player:
-    CHAR_FRONT_STANDING = None
-    CHAR_FRONT_RUNNING_1 = None
-    CHAR_FRONT_RUNNING_2 = None
-
-    CHAR_BACK_STANDING = None
-    CHAR_BACK_RUNNING_1 = None
-    CHAR_BACK_RUNNING_2 = None
-
-    CHAR_LEFT_STANDING = None
-    CHAR_LEFT_RUNNING = None
-
-    CHAR_RIGHT_STANDING = None
-    CHAR_RIGHT_RUNNING = None
+    playerDirection = Direction.DOWN
+    playerMoveState = MoveState.STANDING
+    playerMoveFrame = None
 
     def __init__(self, x, y, playerId):
         self.playerId = playerId
@@ -36,8 +26,6 @@ class Player:
         self.y = y
         self.speed = 3
         self.state = 0
-        self.createImages()
-        self.characterImg = self.CHAR_FRONT_STANDING
 
     def getImagePath(self, direction, moveState, frame=None):
         relativePath = "assets/player/char" + str(self.playerId) + "_"
@@ -46,79 +34,92 @@ class Player:
             framePath = "_" + str(frame)
         return relativePath + direction.value + "_" + moveState.value + framePath + ".png"
 
-    def createImages(self):
-        self.CHAR_FRONT_STANDING = self.getImagePath(Direction.DOWN, MoveState.STANDING)
-        self.CHAR_FRONT_RUNNING_1 = self.getImagePath(Direction.DOWN, MoveState.RUNNING, 1)
-        self.CHAR_FRONT_RUNNING_2 = self.getImagePath(Direction.DOWN, MoveState.RUNNING, 2)
-
-        self.CHAR_BACK_STANDING = self.getImagePath(Direction.UP, MoveState.STANDING)
-        self.CHAR_BACK_RUNNING_1 = self.getImagePath(Direction.UP, MoveState.RUNNING, 1)
-        self.CHAR_BACK_RUNNING_2 = self.getImagePath(Direction.UP, MoveState.RUNNING, 2)
-
-        self.CHAR_LEFT_STANDING = self.getImagePath(Direction.LEFT, MoveState.STANDING)
-        self.CHAR_LEFT_RUNNING = self.getImagePath(Direction.LEFT, MoveState.RUNNING)
-
-        self.CHAR_RIGHT_STANDING = self.getImagePath(Direction.RIGHT, MoveState.STANDING)
-        self.CHAR_RIGHT_RUNNING = self.getImagePath(Direction.RIGHT, MoveState.RUNNING)
+    def getImageFromPath(self, path):
+        return pygame.image.load(path)
 
     def draw(self, win):
-        img = pygame.image.load(self.characterImg)
+        imagePath = self.getImagePath(self.playerDirection, self.playerMoveState, self.playerMoveFrame)
+        img = self.getImageFromPath(imagePath)
         win.blit(img, (self.x, self.y))
 
     def move(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.x -= self.speed
+            self.playerDirection = Direction.LEFT
             if self.state >= 0 and self.state < 10:
-                self.characterImg = self.CHAR_LEFT_STANDING
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = self.CHAR_LEFT_RUNNING
+                self.playerMoveState = MoveState.RUNNING
+                self.playerMoveFrame = None
                 self.state += 1
             else:
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state = 0
 
         elif keys[pygame.K_RIGHT]:
             self.x += self.speed
+            self.playerDirection = Direction.RIGHT
             if self.state >= 0 and self.state < 10:
-                self.characterImg = self.CHAR_RIGHT_STANDING
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = self.CHAR_RIGHT_RUNNING
+                self.playerMoveState = MoveState.RUNNING
+                self.playerMoveFrame = None
                 self.state += 1
             else:
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state = 0
 
         if keys[pygame.K_UP]:
             self.y -= self.speed
+            self.playerDirection = Direction.UP
             if self.state >= 0 and self.state < 10:
-                self.characterImg = self.CHAR_BACK_STANDING
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = self.CHAR_BACK_RUNNING_1
+                self.playerMoveState = MoveState.RUNNING
+                self.playerMoveFrame = 1
                 self.state += 1
             elif self.state >= 20 and self.state < 30:
-                self.characterImg = self.CHAR_BACK_STANDING
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state += 1
             elif self.state >= 30 and self.state < 40:
-                self.characterImg = self.CHAR_BACK_RUNNING_2
+                self.playerMoveState = MoveState.RUNNING
+                self.playerMoveFrame = 2
                 self.state += 1
             elif self.state >= 40:
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state = 0
 
         elif keys[pygame.K_DOWN]:
             self.y += self.speed
+            self.playerDirection = Direction.DOWN
             if self.state >= 0 and self.state < 10:
-                self.characterImg = self.CHAR_FRONT_STANDING
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state += 1
             elif self.state >= 10 and self.state < 20:
-                self.characterImg = self.CHAR_FRONT_RUNNING_1
+                self.playerMoveState = MoveState.RUNNING
+                self.playerMoveFrame = 1
                 self.state += 1
             elif self.state >= 20 and self.state < 30:
-                self.characterImg = self.CHAR_FRONT_STANDING
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state += 1
             elif self.state >= 30 and self.state < 40:
-                self.characterImg = self.CHAR_FRONT_RUNNING_2
+                self.playerMoveState = MoveState.RUNNING
+                self.playerMoveFrame = 2
                 self.state += 1
             elif self.state >= 40:
+                self.playerMoveState = MoveState.STANDING
+                self.playerMoveFrame = None
                 self.state = 0
