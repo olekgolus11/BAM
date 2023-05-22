@@ -1,6 +1,6 @@
 import pygame
 from enum import Enum
-import contants
+import constants
 
 
 class Direction(Enum):
