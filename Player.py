@@ -1,4 +1,18 @@
 import pygame
+from enum import Enum
+
+
+# class syntax
+class Direction(Enum):
+    UP = 'back'
+    DOWN = 'front'
+    LEFT = 'left'
+    RIGHT = 'right'
+
+
+class MoveState(Enum):
+    STANDING = 'standing'
+    RUNNING = 'running'
 
 
 class Player:
@@ -25,20 +39,27 @@ class Player:
         self.createImages()
         self.characterImg = self.CHAR_FRONT_STANDING
 
+    def getImagePath(self, direction, moveState, frame=None):
+        relativePath = "assets/player/char" + str(self.playerId) + "_"
+        framePath = ""
+        if frame:
+            framePath = "_" + str(frame)
+        return relativePath + direction.value + "_" + moveState.value + framePath + ".png"
+
     def createImages(self):
-        self.CHAR_FRONT_STANDING = "assets/player/char" + str(self.playerId) + "_front_standing.png"
-        self.CHAR_FRONT_RUNNING_1 = "assets/player/char" + str(self.playerId) + "_front_running_1.png"
-        self.CHAR_FRONT_RUNNING_2 = "assets/player/char" + str(self.playerId) + "_front_running_2.png"
+        self.CHAR_FRONT_STANDING = self.getImagePath(Direction.DOWN, MoveState.STANDING)
+        self.CHAR_FRONT_RUNNING_1 = self.getImagePath(Direction.DOWN, MoveState.RUNNING, 1)
+        self.CHAR_FRONT_RUNNING_2 = self.getImagePath(Direction.DOWN, MoveState.RUNNING, 2)
 
-        self.CHAR_BACK_STANDING = "assets/player/char" + str(self.playerId) + "_back_standing.png"
-        self.CHAR_BACK_RUNNING_1 = "assets/player/char" + str(self.playerId) + "_back_running_1.png"
-        self.CHAR_BACK_RUNNING_2 = "assets/player/char" + str(self.playerId) + "_back_running_2.png"
+        self.CHAR_BACK_STANDING = self.getImagePath(Direction.UP, MoveState.STANDING)
+        self.CHAR_BACK_RUNNING_1 = self.getImagePath(Direction.UP, MoveState.RUNNING, 1)
+        self.CHAR_BACK_RUNNING_2 = self.getImagePath(Direction.UP, MoveState.RUNNING, 2)
 
-        self.CHAR_LEFT_STANDING = "assets/player/char" + str(self.playerId) + "_left_standing.png"
-        self.CHAR_LEFT_RUNNING = "assets/player/char" + str(self.playerId) + "_left_running.png"
+        self.CHAR_LEFT_STANDING = self.getImagePath(Direction.LEFT, MoveState.STANDING)
+        self.CHAR_LEFT_RUNNING = self.getImagePath(Direction.LEFT, MoveState.RUNNING)
 
-        self.CHAR_RIGHT_STANDING = "assets/player/char" + str(self.playerId) + "_right_standing.png"
-        self.CHAR_RIGHT_RUNNING = "assets/player/char" + str(self.playerId) + "_right_running.png"
+        self.CHAR_RIGHT_STANDING = self.getImagePath(Direction.RIGHT, MoveState.STANDING)
+        self.CHAR_RIGHT_RUNNING = self.getImagePath(Direction.RIGHT, MoveState.RUNNING)
 
     def draw(self, win):
         img = pygame.image.load(self.characterImg)
@@ -101,4 +122,3 @@ class Player:
                 self.state += 1
             elif self.state >= 40:
                 self.state = 0
-
