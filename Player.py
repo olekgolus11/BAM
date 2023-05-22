@@ -2,7 +2,7 @@ import pygame
 from enum import Enum
 import contants
 
-# class syntax
+
 class Direction(Enum):
     UP = 'back'
     DOWN = 'front'
@@ -16,6 +16,8 @@ class MoveState(Enum):
 
 
 class Player:
+    PLAYER_ANIMATION_SPEED_MULTIPLIER = 0.7
+
     playerDirection = Direction.DOWN
     playerMoveState = MoveState.STANDING
     playerRunningImagePathValue = None
@@ -25,23 +27,25 @@ class Player:
         self.x = x
         self.y = y
         self.speed = 3
-        self.stateFrame = 0
+        self.frameState = 0
+        self.fullMoveTimeframe = contants.FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
+
     def move(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
-            self.stateFrame += 1
+            self.frameState += 1
             self.x -= self.speed
             self.playerDirection = Direction.LEFT
         elif keys[pygame.K_RIGHT]:
-            self.stateFrame += 1
+            self.frameState += 1
             self.x += self.speed
             self.playerDirection = Direction.RIGHT
         if keys[pygame.K_UP]:
-            self.stateFrame += 1
+            self.frameState += 1
             self.y -= self.speed
             self.playerDirection = Direction.UP
         elif keys[pygame.K_DOWN]:
-            self.stateFrame += 1
+            self.frameState += 1
             self.y += self.speed
             self.playerDirection = Direction.DOWN
         self.setMoveState()
@@ -51,7 +55,7 @@ class Player:
         win.blit(image, (self.x, self.y))
 
     def getPlayerImage(self):
-        return self.getImageFromPath(self.getImagePath())
+        return pygame.image.load(self.getImagePath())
 
     def getImagePath(self):
         relativePath = f"assets/player/char{self.playerId}_"
@@ -62,19 +66,23 @@ class Player:
         else:
             return f"{relativePath}{self.playerDirection.value}_{self.playerMoveState.value}{runningImagePathValue}.png"
 
-    def getImageFromPath(self, path):
-        return pygame.image.load(path)
-
     def setMoveState(self):
-        if 10 <= self.stateFrame < 20 or 30 <= self.stateFrame < 40:
+        timeframe = self.fullMoveTimeframe
+        if self.shouldPlayerBeInRunningState():
             self.playerMoveState = MoveState.RUNNING
             if self.playerDirection == Direction.UP or self.playerDirection == Direction.DOWN:
-                self.playerRunningImagePathValue = 1 if 10 <= self.stateFrame < 20 else 2
+                self.playerRunningImagePathValue = 1 if timeframe * 0.25 <= self.frameState < timeframe * 0.5 else 2
             else:
                 self.playerRunningImagePathValue = None
         else:
             self.playerMoveState = MoveState.STANDING
             self.playerRunningImagePathValue = None
-            if self.stateFrame >= 40:
-                self.stateFrame = 0
+            if self.frameState >= timeframe:
+                self.frameState = 0
 
+    def shouldPlayerBeInRunningState(self):
+        timeframe = self.fullMoveTimeframe
+        if timeframe * 0.25 <= self.frameState < timeframe * 0.5 or timeframe * 0.75 <= self.frameState < timeframe:
+            return True
+        else:
+            return False
