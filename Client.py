@@ -7,6 +7,7 @@ from Player import Player
 
 
 class Client(ConnectionListener):
+    playersArray = [Player(60, 60, 1), Player(120, 60, 2), Player(60, 120, 3)]
     player = None
     screen = None
     clock = None
@@ -21,8 +22,17 @@ class Client(ConnectionListener):
         connection.Send(data)
         connection.Pump()
 
+    def sendPlayerInfo(self):
+        connection.Send({"action": "playerInfo", "playerInfo": {"id": self.player.playerId, "x": self.player.x, "y": self.player.y}})
+
     def Network_playersInfo(self, data):
         playersInfo = data["playersInfo"]
+        for dictElement in playersInfo:
+            for player in self.playersArray:
+                if dictElement["id"] == player.playerId:
+                    player.x = dictElement["x"]
+                    player.y = dictElement["y"]
+
         print("Players info: ", playersInfo)
 
     def Network_playerInfo(self, data):
@@ -64,10 +74,10 @@ class Client(ConnectionListener):
         self.Pump()
         self.clock.tick(60)
 
-    def drawPlayer(self):
-        self.player.draw()
-        pygame.display.update()
-        self.screen.fill('black')
+    def drawAllPlayers(self):
+        for player in self.playersArray:
+            player.draw(self.screen)
+            pygame.display.update()
 
     def updatePlayerMap(self):
         self.player.map.updateBoard(self.map.board)
@@ -90,6 +100,7 @@ class Client(ConnectionListener):
             self.player.run()
             self.drawPlayer()
             self.drawBoard()
+            self.sendPlayerInfo()
             self.player.bombsHandler.updateBombTimers()
             self.handleBombPlantedThisRound()
             for event in pygame.event.get():

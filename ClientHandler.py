@@ -12,6 +12,15 @@ class ClientHandler(Channel):
     def Network_message(self, data):
         print(self, "Network_message work!")
 
+    def Network_playerInfo(self, data):
+        print(self, "Data about a player: ", data["playerInfo"])
+        playerInfo = data["playerInfo"]
+        for player in self._server.playersInfoArray:
+            if player["id"] == playerInfo["id"]:
+                player["x"] = playerInfo["x"]
+                player["y"] = playerInfo["y"]
+                break
+
     def PlayerInfo(self, playerData):
         self.Send({"action": "playerInfo",
                    "playerInfo": {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"]}})
@@ -26,6 +35,7 @@ class ClientHandler(Channel):
         for i in range(0, len(self._server.playersInfoArray)):
             playerChannel = self._server.playersInfoArray[i]["channel"]
             playerChannel.Send({"action": "bombFromServer", "bomb": data["bomb"]})
+
     def Board(self, data):
         self.Send({"action": "board", "board": data})
 

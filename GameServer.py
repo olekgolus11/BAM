@@ -60,11 +60,13 @@ class GameServer(Server):
         print(channel, "Channel connected")
         self.addPlayer(channel)
         self.sendInfoToPlayer(channel)
-        self.sendAllPlayersDataToAll()
         self.sendBoardToPlayer(channel)
+        print(self.map.board)
+        channel.Send({"action": "board", "board": self.map.board})
 
     def launch(self):
         while True:
+            self.sendAllPlayersDataToAll()
             self.Pump()
             sleep(0.0001)
 
