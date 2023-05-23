@@ -29,3 +29,40 @@ class MapClient(Map):
         for row in range(self.HEIGHT):
             for col in range(self.WIDTH):
                 self.screen.blit(self.getBlock(row, col), (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE))
+
+    def isNextTileAWall(self, y, x, keyPressed):
+        if keyPressed[pygame.K_LEFT]:
+            return self.board[y][x - 1] == 1 or self.board[y][x - 1] == 1.5
+        elif keyPressed[pygame.K_RIGHT]:
+            return self.board[y][x + 1] == 1 or self.board[y][x + 1] == 1.5
+        elif keyPressed[pygame.K_UP]:
+            return self.board[y - 1][x] == 1 or self.board[y - 1][x] == 1.5
+        elif keyPressed[pygame.K_DOWN]:
+            return self.board[y + 1][x] == 1 or self.board[y + 1][x] == 1.5
+        else:
+            return False
+
+    def isNextTileACrate(self, y, x, keyPressed):
+        if keyPressed[pygame.K_LEFT]:
+            return self.board[y][x - 1] == 2
+        elif keyPressed[pygame.K_RIGHT]:
+            return self.board[y][x + 1] == 2
+        elif keyPressed[pygame.K_UP]:
+            return self.board[y - 1][x] == 2
+        elif keyPressed[pygame.K_DOWN]:
+            return self.board[y + 1][x] == 2
+        else:
+            return False
+
+    def isNextTileAFloor(self, y, x, keyPressed):
+        if keyPressed[pygame.K_LEFT]:
+            return self.board[y][x - 1] == 0
+        elif keyPressed[pygame.K_RIGHT]:
+            return self.board[y][x + 1] == 0
+        elif keyPressed[pygame.K_UP]:
+            return self.board[y - 1][x] == 0
+        elif keyPressed[pygame.K_DOWN]:
+            return self.board[y + 1][x] == 0
+        else:
+            return False
+

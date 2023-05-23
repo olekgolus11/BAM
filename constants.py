@@ -12,3 +12,4 @@ BOMB_IMAGE_1 = 'assets/bomb/bomb1.png'
 BOMB_IMAGE_2 = 'assets/bomb/bomb2.png'
 BOMB_IMAGE_3 = 'assets/bomb/bomb3.png'
 FIRE_IMAGE = 'assets/bomb/fire.png'
+TILE_SIZE = 60

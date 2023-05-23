@@ -5,6 +5,7 @@ from PodSixNet.Server import Server
 from ClientHandler import ClientHandler
 from PlayerInfo import PlayerInfo
 from Map.MapServer import MapServer
+from constants import TILE_SIZE
 
 
 class GameServer(Server):
@@ -19,14 +20,15 @@ class GameServer(Server):
         self.map = MapServer
 
     def addPlayer(self, channel):
-        playerinfo = PlayerInfo(0,0, self.getNewId(), channel)
-        self.playersInfoArray.append({"id": playerinfo.id, "x": playerinfo.x, "y": playerinfo.y, "channel": playerinfo.channel})
+        playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel)
+        self.playersInfoArray.append(
+            {"id": playerInfo.id, "x": playerInfo.x, "y": playerInfo.y, "channel": playerInfo.channel})
 
     def getNewId(self):
         for i in range(0, len(self.idArray)):
             if self.idArray[i] == 0:
                 self.idArray[i] = 1
-                return i+1
+                return i + 1
 
     def delPlayer(self, channel):
         for i in range(0, len(self.playersInfoArray)):
@@ -51,13 +53,15 @@ class GameServer(Server):
             if self.playersInfoArray[i]["channel"] == channel:
                 channel.PlayerInfo(self.playersInfoArray[i])
 
+    def sendBoardToPlayer(self, channel):
+        channel.Board(self.map.board)
+
     def Connected(self, channel, addr):
         print(channel, "Channel connected")
         self.addPlayer(channel)
         self.sendInfoToPlayer(channel)
         self.sendAllPlayersDataToAll()
-        print(self.map.board)
-        channel.Send({"action": "board", "board": self.map.board})
+        self.sendBoardToPlayer(channel)
 
     def launch(self):
         while True:
