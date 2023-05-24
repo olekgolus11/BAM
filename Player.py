@@ -1,24 +1,11 @@
 import pygame
-from enum import Enum
 import constants
 from Map.MapClient import MapClient
 from constants import TILE_SIZE
 from utilities import getTileCoordinates
-
-
-class Direction(Enum):
-    UP = 'back'
-    DOWN = 'front'
-    LEFT = 'left'
-    RIGHT = 'right'
-
-
 from BombsHandler import BombsHandler
-
-
-class MoveState(Enum):
-    STANDING = 'standing'
-    RUNNING = 'running'
+from utilities import Direction
+from utilities import MoveState
 
 
 class Player:
@@ -28,8 +15,8 @@ class Player:
     playerMoveState = MoveState.STANDING
     playerRunningImagePathValue = None
 
-    def __init__(self, x, y, playerId):
-        self.screen = None
+    def __init__(self, x, y, playerId, screen):
+        self.screen = screen
         self.playerId = playerId
         self.x = x
         self.y = y
@@ -38,50 +25,56 @@ class Player:
         self.fullMoveTimeframe = constants.FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
         self.bombsHandler = BombsHandler()
         self.map = MapClient(self.screen)
+        self.shouldPlayerMove = True
 
-    def draw(self, screen):
-        self.screen = screen
+    def draw(self):
         self.updatePlayerAnimationState()
         image = self.getPlayerImage()
-        screen.blit(image, (self.x, self.y))
+        self.screen.blit(image, (self.x, self.y))
 
-    def move(self, board):
-        self.map.updateBoard(board)
+    def move(self):
         keyPressed = pygame.key.get_pressed()
         playerShouldMoveInDirection = self.getDirectionFromKey(keyPressed)
-        if self.isPlayerCollidingWithBlock(keyPressed):
-            # TODO: Fix collision with dead end
-            playerShouldMoveInDirection = self.correctPlayerDirectionUponCollidingWithWall(keyPressed)
+        self.shouldPlayerMove = True
+        if self.isPlayerSurroundedWithBlocks(playerShouldMoveInDirection):
+            self.shouldPlayerMove = False
+        if self.isPlayerCollidingWithBlock(playerShouldMoveInDirection):
+            playerShouldMoveInDirection = self.correctPlayerDirectionUponCollidingWithBlock(playerShouldMoveInDirection)
         self.updatePlayerPosition(playerShouldMoveInDirection)
 
-    def isPlayerCollidingWithBlock(self, keyPressed):
+    def isPlayerCollidingWithBlock(self, direction: Direction):
         tileY, tileX = getTileCoordinates(self.y, self.x)
-        if self.isNextTileABlock(keyPressed):
+        if self.isPlayerNearTheBlock(direction):
             return True
-        elif self.map.isNextTileAFloor(tileY, tileX, keyPressed) and (
-                keyPressed[pygame.K_LEFT] or keyPressed[pygame.K_RIGHT]):
+        elif self.map.isNextTileAFloor(tileY, tileX, direction) and (
+                direction == Direction.LEFT or direction == Direction.RIGHT):
             return not self.isPositionDivisibleByTileSize(self.y)
-        elif self.map.isNextTileAFloor(tileY, tileX, keyPressed) and (
-                keyPressed[pygame.K_UP] or keyPressed[pygame.K_DOWN]):
+        elif self.map.isNextTileAFloor(tileY, tileX, direction) and (
+                direction == Direction.UP or direction == Direction.DOWN):
             return not self.isPositionDivisibleByTileSize(self.x)
         else:
             return False
 
-    def correctPlayerDirectionUponCollidingWithWall(self, keyPressed):
-        tileY, tileX = getTileCoordinates(self.y, self.x)
-        if self.isNextTileABlock(keyPressed):
-            if keyPressed[pygame.K_LEFT] or keyPressed[pygame.K_RIGHT]:
-                return Direction.DOWN if self.isPositionedMoreDownThanUp() else Direction.UP
-            elif keyPressed[pygame.K_UP] or keyPressed[pygame.K_DOWN]:
-                return Direction.RIGHT if self.isPositionedMoreRightThanLeft() else Direction.LEFT
-        if self.map.isNextTileAFloor(tileY, tileX, keyPressed):
-            if keyPressed[pygame.K_LEFT] or keyPressed[pygame.K_RIGHT]:
-                return Direction.UP if self.isPositionedMoreDownThanUp() else Direction.DOWN
-            elif keyPressed[pygame.K_UP] or keyPressed[pygame.K_DOWN]:
-                return Direction.LEFT if self.isPositionedMoreRightThanLeft() else Direction.RIGHT
+    def correctPlayerDirectionUponCollidingWithBlock(self, direction: Direction):
+        correctedDirection = None
+        if self.isPlayerNearTheBlock(direction):
+            if direction == Direction.LEFT or direction == Direction.RIGHT:
+                correctedDirection = Direction.DOWN if self.isPositionedMoreDownThanUp() else Direction.UP
+            elif direction == Direction.UP or direction == Direction.DOWN:
+                correctedDirection = Direction.RIGHT if self.isPositionedMoreRightThanLeft() else Direction.LEFT
+        else:
+            if direction == Direction.LEFT or direction == Direction.RIGHT:
+                correctedDirection = Direction.UP if self.isPositionedMoreDownThanUp() else Direction.DOWN
+            elif direction == Direction.UP or direction == Direction.DOWN:
+                correctedDirection = Direction.LEFT if self.isPositionedMoreRightThanLeft() else Direction.RIGHT
+        if self.isPlayerSurroundedWithBlocks(correctedDirection):
+            self.shouldPlayerMove = False
+        return correctedDirection
 
     def updatePlayerPosition(self, direction):
-        if direction is Direction.LEFT:
+        if not self.shouldPlayerMove:
+            self.frameState = 0
+        elif direction is Direction.LEFT:
             self.x -= self.speed
             self.playerDirection = Direction.LEFT
             self.frameState += 1
@@ -110,6 +103,18 @@ class Player:
         win.blit(image, (self.x, self.y))
         self.bombsHandler.drawBombs(win)
 
+    def isPlayerSurroundedWithBlocks(self, direction: Direction):
+        if direction == Direction.LEFT or direction == Direction.RIGHT:
+            return self.isPlayerCollidingWithBlock(direction) \
+                and self.isPlayerCollidingWithBlock(Direction.UP) \
+                and self.isPlayerCollidingWithBlock(Direction.DOWN)
+        elif direction == Direction.UP or direction == Direction.DOWN:
+            return self.isPlayerCollidingWithBlock(direction) \
+                and self.isPlayerCollidingWithBlock(Direction.LEFT) \
+                and self.isPlayerCollidingWithBlock(Direction.RIGHT)
+        else:
+            return False
+
     def getDirectionFromKey(self, keyPressed):
         if keyPressed[pygame.K_LEFT]:
             return Direction.LEFT
@@ -125,17 +130,16 @@ class Player:
     def isPositionDivisibleByTileSize(self, position):
         return position % TILE_SIZE == 0
 
-    def isNextTileABlock(self, keyPressed):
+    def isPlayerNearTheBlock(self, direction: Direction):
         tileY, tileX = getTileCoordinates(self.y, self.x)
-        isTileABlock = self.map.isNextTileAWall(tileY, tileX, keyPressed) or self.map.isNextTileACrate(tileY, tileX,
-                                                                                                       keyPressed)
-        if keyPressed[pygame.K_LEFT] and isTileABlock:
+        isTileABlock = self.map.isNextTileABlock(tileY, tileX, direction)
+        if direction == Direction.LEFT and isTileABlock:
             return self.isPositionedMoreLeftThanRight()
-        elif keyPressed[pygame.K_RIGHT] and isTileABlock:
+        elif direction == Direction.RIGHT and isTileABlock:
             return self.isPositionedMoreRightThanLeft()
-        elif keyPressed[pygame.K_UP] and isTileABlock:
+        elif direction == Direction.UP and isTileABlock:
             return self.isPositionedMoreUpThanDown()
-        elif keyPressed[pygame.K_DOWN] and isTileABlock:
+        elif direction == Direction.DOWN and isTileABlock:
             return self.isPositionedMoreDownThanUp()
         else:
             return False

@@ -27,7 +27,7 @@ class Client(ConnectionListener):
 
     def Network_playerInfo(self, data):
         info = data["playerInfo"]
-        self.player = Player(info["x"], info["y"], info["id"])
+        self.player = Player(info["x"], info["y"], info["id"], self.screen)
         print("My info: ", "id: ", self.player.playerId, "x: ", self.player.x, "y: ", self.player.y)
 
     def Network_board(self, data):
@@ -65,9 +65,12 @@ class Client(ConnectionListener):
         self.clock.tick(60)
 
     def drawPlayer(self):
-        self.player.draw(self.screen)
+        self.player.draw()
         pygame.display.update()
         self.screen.fill('black')
+
+    def updatePlayerMap(self):
+        self.player.map.updateBoard(self.map.board)
 
     def drawBoard(self):
         self.map.draw()
@@ -83,7 +86,8 @@ class Client(ConnectionListener):
         running = True
         while running:
             self.update()
-            self.player.move(self.map.board)
+            self.updatePlayerMap()
+            self.player.move()
             self.drawPlayer()
             self.drawBoard()
             self.player.bombsHandler.updateBombTimers()
