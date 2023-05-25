@@ -32,7 +32,6 @@ class BombsHandler:
         y = dictBomb["y"]
         power = dictBomb["power"]
         self.everyPlayersBombs.append(Bomb(x, y, power))
-        print(self.everyPlayersBombs)
 
     def bombToDictionary(self, bomb):
         return {"x": bomb.x, "y": bomb.y, "power": bomb.power}
