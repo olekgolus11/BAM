@@ -60,7 +60,7 @@ class Player:
     def draw(self, win):
         image = self.getPlayerImage()
         win.blit(image, (self.x, self.y))
-        self.bombsHandler.printBombs(win)
+        self.bombsHandler.drawBombs(win)
 
     def getPlayerImage(self):
         return pygame.image.load(self.getImagePath())

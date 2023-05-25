@@ -75,6 +75,10 @@ class Client(ConnectionListener):
     def sendBombToServer(self, bomb):
         connection.Send({"action": "newBombFromPlayer", "bomb": self.player.bombsHandler.bombToDictionary(bomb)})
 
+    def handleBombPlantedThisRound(self):
+        if self.player.bombsHandler.bombPlantedThisRound:
+            self.sendBombToServer(self.player.bombsHandler.bombPlantedThisRound)
+            self.player.bombsHandler.bombPlantedThisRound = 0
     def run(self):
         running = True
         while running:
@@ -83,9 +87,7 @@ class Client(ConnectionListener):
             self.drawPlayer()
             self.drawBoard()
             self.player.bombsHandler.updateBombTimers()
-            if self.player.bombsHandler.bombPlantedThisRound:
-                self.sendBombToServer(self.player.bombsHandler.bombPlantedThisRound)
-                self.player.bombsHandler.bombPlantedThisRound = 0
+            self.handleBombPlantedThisRound()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False

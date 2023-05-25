@@ -8,11 +8,8 @@ class Bomb:
         self.power = power
         self.timer = 0
 
-    def __del__(self):
-        pass
-
-    def plant(self, win):
-        file = 0
+    def draw(self, win):
+        file = None
         if self.timer <= FIRST_BOMB_STATE:
             file = BOMB_IMAGE_1
         elif self.timer <= SECOND_BOMB_STATE:

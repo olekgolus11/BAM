@@ -23,7 +23,7 @@ class GameServer(Server):
         self.playersInfoArray.append({"id": playerinfo.id, "x": playerinfo.x, "y": playerinfo.y, "channel": playerinfo.channel})
 
     def getNewId(self):
-        for i in range(0, 3):
+        for i in range(0, len(self.idArray)):
             if self.idArray[i] == 0:
                 self.idArray[i] = 1
                 return i+1

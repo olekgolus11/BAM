@@ -13,13 +13,12 @@ class BombsHandler:
         self.myBombsPlanted = 0
         self.bombPower = 3
 
-    def printBombs(self, screen):
+    def drawBombs(self, screen):
         for bomb in self.everyPlayersBombs:
             if bomb.timer >= FOURTH_BOMB_STATE:
-                bomb.__del__()
                 self.everyPlayersBombs.remove(bomb)
             else:
-                bomb.plant(screen)
+                bomb.draw(screen)
 
     def addBomb(self, x, y):
         if self.myBombsPlanted < self.maxBombsPlanted and self.isBombPlantedThisRound is False:
