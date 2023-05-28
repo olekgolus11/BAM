@@ -87,7 +87,7 @@ class Client(ConnectionListener):
         while running:
             self.update()
             self.updatePlayerMap()
-            self.player.move()
+            self.player.run()
             self.drawPlayer()
             self.drawBoard()
             self.player.bombsHandler.updateBombTimers()

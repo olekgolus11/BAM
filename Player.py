@@ -31,9 +31,14 @@ class Player:
         self.updatePlayerAnimationState()
         image = self.getPlayerImage()
         self.screen.blit(image, (self.x, self.y))
+        self.bombsHandler.drawBombs(self.screen)
 
-    def move(self):
+    def run(self):
         keyPressed = pygame.key.get_pressed()
+        self.handlePlayerMovement(keyPressed)
+        self.handlePlayerBomb(keyPressed)
+
+    def handlePlayerMovement(self, keyPressed):
         playerShouldMoveInDirection = self.getDirectionFromKey(keyPressed)
         self.shouldPlayerMove = True
         if self.isPlayerSurroundedWithBlocks(playerShouldMoveInDirection):
@@ -41,6 +46,12 @@ class Player:
         if self.isPlayerCollidingWithBlock(playerShouldMoveInDirection):
             playerShouldMoveInDirection = self.correctPlayerDirectionUponCollidingWithBlock(playerShouldMoveInDirection)
         self.updatePlayerPosition(playerShouldMoveInDirection)
+
+    def handlePlayerBomb(self, keyPressed):
+        if keyPressed[pygame.K_SPACE]:
+            self.bombsHandler.addBomb(self.x, self.y)
+        else:
+            self.bombsHandler.isBombPlantedThisRound = False
 
     def isPlayerCollidingWithBlock(self, direction: Direction):
         tileY, tileX = getTileCoordinates(self.y, self.x)
@@ -92,16 +103,6 @@ class Player:
             self.frameState += 1
         else:
             self.frameState = 0
-        self.updatePlayerMoveState()
-        if keys[pygame.K_SPACE]:
-            self.bombsHandler.addBomb(self.x, self.y)
-        else:
-            self.bombsHandler.isBombPlantedThisRound = False
-
-    def draw(self, win):
-        image = self.getPlayerImage()
-        win.blit(image, (self.x, self.y))
-        self.bombsHandler.drawBombs(win)
 
     def isPlayerSurroundedWithBlocks(self, direction: Direction):
         if direction == Direction.LEFT or direction == Direction.RIGHT:
