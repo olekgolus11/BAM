@@ -7,11 +7,11 @@ from Player import Player
 
 
 class Client(ConnectionListener):
-    playersArray = [Player(60, 60, 1), Player(120, 60, 2), Player(60, 120, 3)]
     player = None
     screen = None
     clock = None
     map = None
+    playersArray = [Player(60, 60, 1, screen), Player(120, 60, 2, screen), Player(60, 120, 3, screen)]
 
     def __init__(self, host, port):
         self.Connect((host, port))
@@ -56,6 +56,10 @@ class Client(ConnectionListener):
     def Network_bombFromServer(self, data):
         self.player.bombsHandler.dictionaryToBomb(data["bomb"])
 
+    def addScreenToPlayers(self):
+        for player in self.playersArray:
+            player.screen = self.screen
+
     def setupWindow(self):
         pygame.init()
         self.screen = pygame.display.set_mode((1280, 720))
@@ -74,7 +78,7 @@ class Client(ConnectionListener):
 
     def drawAllPlayers(self):
         for player in self.playersArray:
-            player.draw(self.screen)
+            player.draw()
         pygame.display.update()
 
     def updatePlayerMap(self):
@@ -90,13 +94,14 @@ class Client(ConnectionListener):
         if self.player.bombsHandler.bombPlantedThisRound:
             self.sendBombToServer(self.player.bombsHandler.bombPlantedThisRound)
             self.player.bombsHandler.bombPlantedThisRound = 0
+
     def run(self):
         running = True
         while running:
             self.update()
             self.updatePlayerMap()
             self.player.run()
-            self.drawPlayer()
+            self.drawAllPlayers()
             self.drawBoard()
             self.sendPlayerInfo()
             self.player.bombsHandler.updateBombTimers()
@@ -109,4 +114,5 @@ class Client(ConnectionListener):
 
 client = Client("localhost", 3000)
 client.setupWindow()
+client.addScreenToPlayers()
 client.run()
