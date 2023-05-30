@@ -28,9 +28,7 @@ class Player:
         self.shouldPlayerMove = True
 
     def draw(self, imagePath):
-        self.updatePlayerAnimationState()
         if imagePath != "":
-            print(imagePath)
             image = pygame.image.load(imagePath)
             self.screen.blit(image, (self.x, self.y))
         self.bombsHandler.drawBombs(self.screen)
@@ -38,6 +36,7 @@ class Player:
     def run(self):
         keyPressed = pygame.key.get_pressed()
         self.handlePlayerMovement(keyPressed)
+        self.updatePlayerAnimationState()
         self.handlePlayerBomb(keyPressed)
 
     def handlePlayerMovement(self, keyPressed):
@@ -48,6 +47,7 @@ class Player:
         if self.isPlayerCollidingWithBlock(playerShouldMoveInDirection):
             playerShouldMoveInDirection = self.correctPlayerDirectionUponCollidingWithBlock(playerShouldMoveInDirection)
         self.updatePlayerPosition(playerShouldMoveInDirection)
+        # print("frameState: " + str(self.frameState))
 
     def handlePlayerBomb(self, keyPressed):
         if keyPressed[pygame.K_SPACE]:
@@ -169,12 +169,15 @@ class Player:
     def getImagePath(self):
         relativePath = f"assets/player/char{self.playerId}_"
         runningImagePathValue = f"_{self.playerRunningImagePathValue}" if self.playerRunningImagePathValue else ""
+        print(self.playerMoveState.value)
+        # print("runningImagePathValue: " + runningImagePathValue)
         if self.playerDirection is None or self.playerMoveState is None:
             return f"{relativePath}front_standing.png"
         else:
             return f"{relativePath}{self.playerDirection.value}_{self.playerMoveState.value}{runningImagePathValue}.png"
 
     def updatePlayerAnimationState(self):
+        # print("frameState: " + str(self.frameState))
         if self.shouldPlayerBeInRunningState():
             self.playerMoveState = MoveState.RUNNING
             self.updatePlayerRunningImagePathValue()
@@ -186,6 +189,7 @@ class Player:
 
     def shouldPlayerBeInRunningState(self):
         frame = self.fullMoveTimeframe
+        # print("frameState: " + str(self.frameState))
         if frame * 0.25 <= self.frameState < frame * 0.5 or frame * 0.75 <= self.frameState < frame:
             return True
         else:
@@ -194,6 +198,8 @@ class Player:
     def updatePlayerRunningImagePathValue(self):
         frame = self.fullMoveTimeframe
         if self.playerDirection == Direction.UP or self.playerDirection == Direction.DOWN:
+            # print("1")
             self.playerRunningImagePathValue = 1 if frame * 0.25 <= self.frameState < frame * 0.5 else 2
         else:
+            # print("2")
             self.playerRunningImagePathValue = None
