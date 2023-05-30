@@ -12,6 +12,7 @@ class Client(ConnectionListener):
     clock = None
     map = None
     playersArray = [Player(60, 60, 1, screen), Player(120, 60, 2, screen), Player(60, 120, 3, screen)]
+    imagePathArray = {"1": "", "2": "", "3": ""}
 
     def __init__(self, host, port):
         self.Connect((host, port))
@@ -23,7 +24,7 @@ class Client(ConnectionListener):
         connection.Pump()
 
     def sendPlayerInfo(self):
-        connection.Send({"action": "playerInfo", "playerInfo": {"id": self.player.playerId, "x": self.player.x, "y": self.player.y}})
+        connection.Send({"action": "playerInfo", "playerInfo": {"id": self.player.playerId, "x": self.player.x, "y": self.player.y, "imagePath": self.player.getImagePath()}})
 
     def Network_playersInfo(self, data):
         playersInfo = data["playersInfo"]
@@ -32,11 +33,14 @@ class Client(ConnectionListener):
                 if dictElement["id"] == player.playerId:
                     player.x = dictElement["x"]
                     player.y = dictElement["y"]
+                    self.imagePathArray[str(player.playerId)] = dictElement["imagePath"]
 
     def Network_playerInfo(self, data):
         info = data["playerInfo"]
         self.player = Player(info["x"], info["y"], info["id"], self.screen)
-        print("My info: ", "id: ", self.player.playerId, "x: ", self.player.x, "y: ", self.player.y)
+        self.imagePathArray[str(self.player.playerId)] = info["imagePath"]
+        print("My info: ", "id: ", self.player.playerId,
+              "x: ", self.player.x, "y: ", self.player.y, "imagePath: ", self.imagePathArray[str(self.player.playerId)])
 
     def Network_board(self, data):
         self.map.updateBoard(data['board'])
@@ -78,7 +82,7 @@ class Client(ConnectionListener):
 
     def drawAllPlayers(self):
         for player in self.playersArray:
-            player.draw()
+            player.draw(self.imagePathArray[str(player.playerId)])
         pygame.display.update()
 
     def updatePlayerMap(self):

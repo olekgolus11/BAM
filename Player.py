@@ -27,10 +27,11 @@ class Player:
         self.map = MapClient(self.screen)
         self.shouldPlayerMove = True
 
-    def draw(self):
+    def draw(self, imagePath = None):
         self.updatePlayerAnimationState()
-        image = self.getPlayerImage()
-        self.screen.blit(image, (self.x, self.y))
+        if imagePath is not None and imagePath != "":
+            image = pygame.image.load(imagePath)
+            self.screen.blit(image, (self.x, self.y))
         self.bombsHandler.drawBombs(self.screen)
 
     def run(self):

@@ -18,11 +18,12 @@ class ClientHandler(Channel):
             if player["id"] == playerInfo["id"]:
                 player["x"] = playerInfo["x"]
                 player["y"] = playerInfo["y"]
+                player["imagePath"] = playerInfo["imagePath"]
                 break
 
     def PlayerInfo(self, playerData):
         self.Send({"action": "playerInfo",
-                   "playerInfo": {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"]}})
+                   "playerInfo": {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"], "imagePath": playerData["imagePath"]}})
 
     def PlayersInfo(self, data):
         self.Send({"action": "playersInfo", "playersInfo": data})
