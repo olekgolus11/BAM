@@ -102,6 +102,7 @@ class Client(ConnectionListener):
 
     def run(self):
         running = True
+        self.addScreenToPlayers()
         while running:
             self.update()
             self.updatePlayerMap()
@@ -119,5 +120,4 @@ class Client(ConnectionListener):
 
 client = Client("localhost", 3000)
 client.setupWindow()
-client.addScreenToPlayers()
 client.run()
