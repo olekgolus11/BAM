@@ -24,16 +24,17 @@ class Client(ConnectionListener):
         connection.Pump()
 
     def sendPlayerInfo(self):
-        connection.Send({"action": "playerInfo", "playerInfo": {"id": self.player.playerId, "x": self.player.x, "y": self.player.y, "imagePath": self.player.getImagePath()}})
+        connection.Send({"action": "playerInfo", "playerInfo":
+            {"id": self.player.playerId, "x": self.player.x, "y": self.player.y, "imagePath": self.player.getImagePath()}})
 
     def Network_playersInfo(self, data):
         playersInfo = data["playersInfo"]
-        for dictElement in playersInfo:
+        for playerInfoElement in playersInfo:
             for player in self.playersArray:
-                if dictElement["id"] == player.playerId:
-                    player.x = dictElement["x"]
-                    player.y = dictElement["y"]
-                    self.imagePathArray[str(player.playerId)] = dictElement["imagePath"]
+                if playerInfoElement["id"] == player.playerId:
+                    player.x = playerInfoElement["x"]
+                    player.y = playerInfoElement["y"]
+                    self.imagePathArray[str(player.playerId)] = playerInfoElement["imagePath"]
 
     def Network_playerInfo(self, data):
         info = data["playerInfo"]

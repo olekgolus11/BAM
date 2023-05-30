@@ -65,7 +65,6 @@ class GameServer(Server):
         self.addPlayer(channel)
         self.sendInfoToPlayer(channel)
         self.sendBoardToPlayer(channel)
-        print(self.map.board)
         channel.Send({"action": "board", "board": self.map.board})
 
     def launch(self):
