@@ -27,15 +27,16 @@ class Player:
         self.map = MapClient(self.screen)
         self.shouldPlayerMove = True
 
-    def draw(self):
-        self.updatePlayerAnimationState()
-        image = self.getPlayerImage()
-        self.screen.blit(image, (self.x, self.y))
+    def draw(self, imagePath):
+        if imagePath != "":
+            image = pygame.image.load(imagePath)
+            self.screen.blit(image, (self.x, self.y))
         self.bombsHandler.drawBombs(self.screen)
 
     def run(self):
         keyPressed = pygame.key.get_pressed()
         self.handlePlayerMovement(keyPressed)
+        self.updatePlayerAnimationState()
         self.handlePlayerBomb(keyPressed)
 
     def handlePlayerMovement(self, keyPressed):

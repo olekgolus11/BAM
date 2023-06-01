@@ -13,7 +13,10 @@ class Client(ConnectionListener):
     map = None
 
     def __init__(self, host, port):
+        self.setupWindow()
         self.Connect((host, port))
+        self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen), Player(60, 120, 3, self.screen)]
+        self.imagePathArray = {"1": "", "2": "", "3": ""}
         print("Client started")
 
     def Network_message(self, data):
@@ -21,14 +24,25 @@ class Client(ConnectionListener):
         connection.Send(data)
         connection.Pump()
 
+    def sendPlayerInfo(self):
+        connection.Send({"action": "playerInfo", "playerInfo":
+            {"id": self.player.playerId, "x": self.player.x, "y": self.player.y, "imagePath": self.player.getImagePath()}})
+
     def Network_playersInfo(self, data):
         playersInfo = data["playersInfo"]
-        print("Players info: ", playersInfo)
+        for playerInfoElement in playersInfo:
+            for player in self.playersArray:
+                if playerInfoElement["id"] == player.playerId:
+                    player.x = playerInfoElement["x"]
+                    player.y = playerInfoElement["y"]
+                    self.imagePathArray[str(player.playerId)] = playerInfoElement["imagePath"]
 
     def Network_playerInfo(self, data):
         info = data["playerInfo"]
         self.player = Player(info["x"], info["y"], info["id"], self.screen)
-        print("My info: ", "id: ", self.player.playerId, "x: ", self.player.x, "y: ", self.player.y)
+        self.imagePathArray[str(self.player.playerId)] = info["imagePath"]
+        print("My info: ", "id: ", self.player.playerId,
+              "x: ", self.player.x, "y: ", self.player.y, "imagePath: ", self.imagePathArray[str(self.player.playerId)])
 
     def Network_board(self, data):
         self.map.updateBoard(data['board'])
@@ -48,6 +62,7 @@ class Client(ConnectionListener):
     def Network_bombFromServer(self, data):
         self.player.bombsHandler.dictionaryToBomb(data["bomb"])
 
+
     def setupWindow(self):
         pygame.init()
         self.screen = pygame.display.set_mode((1280, 720))
@@ -64,10 +79,10 @@ class Client(ConnectionListener):
         self.Pump()
         self.clock.tick(60)
 
-    def drawPlayer(self):
-        self.player.draw()
+    def drawAllPlayers(self):
+        for player in self.playersArray:
+            player.draw(self.imagePathArray[str(player.playerId)])
         pygame.display.update()
-        self.screen.fill('black')
 
     def updatePlayerMap(self):
         self.player.map.updateBoard(self.map.board)
@@ -82,14 +97,16 @@ class Client(ConnectionListener):
         if self.player.bombsHandler.bombPlantedThisRound:
             self.sendBombToServer(self.player.bombsHandler.bombPlantedThisRound)
             self.player.bombsHandler.bombPlantedThisRound = 0
+
     def run(self):
         running = True
         while running:
             self.update()
             self.updatePlayerMap()
             self.player.run()
-            self.drawPlayer()
+            self.drawAllPlayers()
             self.drawBoard()
+            self.sendPlayerInfo()
             self.player.bombsHandler.updateBombTimers()
             self.handleBombPlantedThisRound()
             for event in pygame.event.get():
@@ -99,5 +116,7 @@ class Client(ConnectionListener):
 
 
 client = Client("localhost", 3000)
-client.setupWindow()
+#TODO: Change spinlock to something better
+while client.player is None:
+    client.update()
 client.run()

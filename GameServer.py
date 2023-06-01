@@ -20,9 +20,13 @@ class GameServer(Server):
         self.map = MapServer
 
     def addPlayer(self, channel):
-        playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel)
+        playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel, "")
+        playerInfo.imagePath = self.getPlayerImagePath(playerInfo.id)
         self.playersInfoArray.append(
-            {"id": playerInfo.id, "x": playerInfo.x, "y": playerInfo.y, "channel": playerInfo.channel})
+            {"id": playerInfo.id, "x": playerInfo.x, "y": playerInfo.y, "channel": playerInfo.channel, "imagePath": playerInfo.imagePath})
+
+    def getPlayerImagePath(self, PlayerId):
+        return f"assets/player/char{PlayerId}_front_standing.png"
 
     def getNewId(self):
         for i in range(0, len(self.idArray)):
@@ -45,7 +49,7 @@ class GameServer(Server):
         playersInfo = []
         for i in range(0, len(self.playersInfoArray)):
             player = self.playersInfoArray[i]
-            playersInfo.append({"id": player["id"], "x": player["x"], "y": player["y"]})
+            playersInfo.append({"id": player["id"], "x": player["x"], "y": player["y"], "imagePath": player["imagePath"]})
         return playersInfo
 
     def sendInfoToPlayer(self, channel):
@@ -60,11 +64,12 @@ class GameServer(Server):
         print(channel, "Channel connected")
         self.addPlayer(channel)
         self.sendInfoToPlayer(channel)
-        self.sendAllPlayersDataToAll()
         self.sendBoardToPlayer(channel)
+        channel.Send({"action": "board", "board": self.map.board})
 
     def launch(self):
         while True:
+            self.sendAllPlayersDataToAll()
             self.Pump()
             sleep(0.0001)
 
