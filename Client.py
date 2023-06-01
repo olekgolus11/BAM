@@ -11,11 +11,11 @@ class Client(ConnectionListener):
     screen = None
     clock = None
     map = None
-    playersArray = [Player(60, 60, 1, screen), Player(120, 60, 2, screen), Player(60, 120, 3, screen)]
-    imagePathArray = {"1": "", "2": "", "3": ""}
 
     def __init__(self, host, port):
         self.Connect((host, port))
+        self.playersArray = [Player(60, 60, 1, None), Player(120, 60, 2, None), Player(60, 120, 3, None)]
+        self.imagePathArray = {"1": "", "2": "", "3": ""}
         print("Client started")
 
     def Network_message(self, data):
