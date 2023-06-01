@@ -13,8 +13,9 @@ class Client(ConnectionListener):
     map = None
 
     def __init__(self, host, port):
+        self.setupWindow()
         self.Connect((host, port))
-        self.playersArray = [Player(60, 60, 1, None), Player(120, 60, 2, None), Player(60, 120, 3, None)]
+        self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen), Player(60, 120, 3, self.screen)]
         self.imagePathArray = {"1": "", "2": "", "3": ""}
         print("Client started")
 
@@ -61,9 +62,6 @@ class Client(ConnectionListener):
     def Network_bombFromServer(self, data):
         self.player.bombsHandler.dictionaryToBomb(data["bomb"])
 
-    def addScreenToPlayers(self):
-        for player in self.playersArray:
-            player.screen = self.screen
 
     def setupWindow(self):
         pygame.init()
@@ -102,7 +100,6 @@ class Client(ConnectionListener):
 
     def run(self):
         running = True
-        self.addScreenToPlayers()
         while running:
             self.update()
             self.updatePlayerMap()
@@ -119,5 +116,7 @@ class Client(ConnectionListener):
 
 
 client = Client("localhost", 3000)
-client.setupWindow()
+#TODO: Change spinlock to something better
+while client.player is None:
+    client.update()
 client.run()
