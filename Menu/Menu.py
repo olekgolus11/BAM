@@ -10,50 +10,65 @@ pygame.display.set_caption("Menu")
 
 background = pygame.image.load(f"../assets/background.jpeg")
 
-def get_font(size):
-    return pygame.font.Font(f"../assets/font/font.ttf", size)
 
+class Menu:
+    screen = None
+    clock = None
 
-def showMenu():
-    pygame.display.set_caption("Menu")
+    def __init__(self):
+        self.prepareScreen()
 
-    while True:
-        screen.blit(background, (0, 0))
+    def prepareScreen(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((1280, 720))
+        self.screen.fill('black')
+        self.clock = pygame.time.Clock()
+        pygame.display.set_caption("BAM!")
 
-        mousePos = pygame.mouse.get_pos()
+    def getFont(self, size):
+        return pygame.font.Font(f"../assets/font/font.ttf", size)
 
-        menuText = get_font(125).render("BAM", True, "green")
-        menuRect = menuText.get_rect(center=(640, 100))
+    def showMenu(self):
+        pygame.display.set_caption("Menu")
 
-        playButton = Button(pos=(640, 275), textInput="PLAY", font=get_font(75), baseColor="purple",
-                            hoveringColor="red")
+        while True:
+            self.screen.blit(background, (0, 0))
 
-        rulesButton = Button(pos=(640, 425), textInput="RULES", font=get_font(75), baseColor="purple",
-                             hoveringColor="red")
+            mousePos = pygame.mouse.get_pos()
 
-        quitButton = Button(pos=(640, 575), textInput="QUIT", font=get_font(75), baseColor="purple",
-                            hoveringColor="red")
+            menuText = self.getFont(125).render("BAM", True, "green")
+            menuRect = menuText.get_rect(center=(640, 100))
 
-        screen.blit(menuText, menuRect)
+            playButton = Button(pos=(640, 275), textInput="PLAY", font=self.getFont(75), baseColor="purple",
+                                hoveringColor="red")
 
-        for button in [playButton, rulesButton, quitButton]:
-            button.changeColor(mousePos)
-            button.update(screen)
+            rulesButton = Button(pos=(640, 425), textInput="RULES", font=self.getFont(75), baseColor="purple",
+                                 hoveringColor="red")
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if playButton.checkForInput(mousePos):
-                    lobby()
-                elif rulesButton.checkForInput(mousePos):
-                    rules()
-                elif quitButton.checkForInput(mousePos):
+            quitButton = Button(pos=(640, 575), textInput="QUIT", font=self.getFont(75), baseColor="purple",
+                                hoveringColor="red")
+
+            self.screen.blit(menuText, menuRect)
+
+            for button in [playButton, rulesButton, quitButton]:
+                button.changeColor(mousePos)
+                button.update(screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if playButton.checkForInput(mousePos):
+                        lobby()
+                    elif rulesButton.checkForInput(mousePos):
+                        rules()
+                    elif quitButton.checkForInput(mousePos):
+                        pygame.quit()
+                        sys.exit()
 
-        pygame.display.update()
+            pygame.display.update()
 
 
-showMenu()
+menu = Menu()
+menu.showMenu()
