@@ -60,8 +60,9 @@ class Client(ConnectionListener):
         exit()
 
     def Network_bombFromServer(self, data):
-        self.player.bombsHandler.dictionaryToBomb(data["bomb"])
-
+        for player in self.playersArray:
+            if player.playerId == self.player.playerId:
+                player.bombsHandler.dictionaryToBomb(data["bomb"])
 
     def setupWindow(self):
         pygame.init()
