@@ -28,13 +28,13 @@ class Menu:
         self.screen.blit(menuText, menuRect)
 
     def drawPlayersTexts(self):
-        playerOneText = self.getFont(PLAYER_FONT_SIZE).render("Player 1", True, "red")
+        playerOneText = self.getFont(PLAYER_FONT_SIZE).render("Player 1", True, "black")
         playerOneRect = playerOneText.get_rect(center=(PLAYER_ONE_X_POS, PLAYER_TEXT_Y_POS))
 
-        playerTwoText = self.getFont(PLAYER_FONT_SIZE).render("Player 2", True, "red")
+        playerTwoText = self.getFont(PLAYER_FONT_SIZE).render("Player 2", True, "black")
         playerTwoRect = playerOneText.get_rect(center=(PLAYER_TWO_X_POS, PLAYER_TEXT_Y_POS))
 
-        playerThreeText = self.getFont(PLAYER_FONT_SIZE).render("Player 3", True, "red")
+        playerThreeText = self.getFont(PLAYER_FONT_SIZE).render("Player 3", True, "black")
         playerThreeRect = playerOneText.get_rect(center=(PLAYER_THREE_X_POS, PLAYER_TEXT_Y_POS))
 
         self.screen.blit(playerOneText, playerOneRect)
@@ -42,9 +42,9 @@ class Menu:
         self.screen.blit(playerThreeText, playerThreeRect)
 
     def drawCircles(self):
-        pygame.draw.circle(self.screen, "gray", (PLAYER_ONE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
-        pygame.draw.circle(self.screen, "gray", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
-        pygame.draw.circle(self.screen, "gray", (PLAYER_THREE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+        pygame.draw.circle(self.screen, "red", (PLAYER_ONE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+        pygame.draw.circle(self.screen, "red", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+        pygame.draw.circle(self.screen, "red", (PLAYER_THREE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
 
     def drawBackground(self):
         self.screen.blit(self.background, (0, 0))
@@ -58,6 +58,18 @@ class Menu:
                 exit()
 
         pygame.display.update()
+
+    def drawPlayerInLobby(self, playerId):
+        playerImage = pygame.image.load(f"../assets/player/char" + str(playerId) + "_front_standing.png")
+        if playerId == 1:
+            pygame.draw.circle(self.screen, "green", (PLAYER_ONE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+            self.screen.blit(playerImage, (PLAYER_ONE_X_POS-AVATAR_PADDING, CIRCLE_Y_POS-AVATAR_PADDING))
+        elif playerId == 2:
+            pygame.draw.circle(self.screen, "green", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+            self.screen.blit(playerImage, (PLAYER_TWO_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
+        else:
+            pygame.draw.circle(self.screen, "green", (PLAYER_THREE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+            self.screen.blit(playerImage, (PLAYER_THREE_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
 
     def lobby(self):
         while True:
