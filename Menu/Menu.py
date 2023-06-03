@@ -6,6 +6,13 @@ from constants import *
 class Menu:
     screen = None
     clock = None
+    rulesTextArray = ["Each player starts with the same amount of bombs (3)",
+                      "Each player places a bomb in order to destroy crates from which items drop,",
+                      "and to kill other players",
+                      "Items dropped from crates include powerups for speed, bomb range,",
+                      "or temporary immunity to explosions",
+                      "Each game consists of 3 players",
+                      "The map consists of indestructible walls in order to make the game more interesting"]
 
     def __init__(self):
         self.background = pygame.image.load(f"../assets/background.jpeg")
@@ -49,21 +56,56 @@ class Menu:
     def drawBackground(self):
         self.screen.blit(self.background, (0, 0))
 
+    def drawRulesMainText(self):
+        rulesText = self.getFont(75).render("RULES", True, "white")
+        rulesRect = rulesText.get_rect(center=(CENTER_X_POS, 250))
+
+        self.screen.blit(rulesText, rulesRect)
+
+    def drawBackgroundRectangle(self):
+        height = 500
+        width = 1150
+        pygame.draw.rect(self.screen, "purple", pygame.Rect(CENTER_X_POS - width / 2, 180, width, height), 0, 30)
+
+    def drawRulesText(self):
+        for i in range(0, len(self.rulesTextArray)):
+            ruleText = self.getFont(13).render(self.rulesTextArray[i], True, "white")
+            ruleRect = ruleText.get_rect(center=(CENTER_X_POS, 330 + i * 40))
+            ruleRect.left = CENTER_X_POS/6
+            self.screen.blit(ruleText, ruleRect)
+
     def rules(self):
-        self.drawBackground()
+        while True:
+            self.drawBackground()
+            self.drawMenuText()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+            mousePos = pygame.mouse.get_pos()
 
-        pygame.display.update()
+            self.drawBackgroundRectangle()
+            self.drawRulesMainText()
+            self.drawRulesText()
+
+            backButton = Button(pos=(CENTER_X_POS, 640), textInput="BACK", font=self.getFont(50),
+                                baseColor="white", hoveringColor="red")
+
+            backButton.changeColor(mousePos)
+            backButton.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if backButton.checkForInput(mousePos):
+                        self.showMenu()
+
+            pygame.display.update()
 
     def drawPlayerInLobby(self, playerId):
         playerImage = pygame.image.load(f"../assets/player/char" + str(playerId) + "_front_standing.png")
         if playerId == 1:
             pygame.draw.circle(self.screen, "green", (PLAYER_ONE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
-            self.screen.blit(playerImage, (PLAYER_ONE_X_POS-AVATAR_PADDING, CIRCLE_Y_POS-AVATAR_PADDING))
+            self.screen.blit(playerImage, (PLAYER_ONE_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
         elif playerId == 2:
             pygame.draw.circle(self.screen, "green", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
             self.screen.blit(playerImage, (PLAYER_TWO_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
