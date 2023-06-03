@@ -1,11 +1,12 @@
 import pygame
-from Button import Button
+from Menu.Button import Button
 from constants import *
 
 
 class Menu:
     screen = None
     clock = None
+    playersLobbyDraw = [False, False, False]
     rulesTextArray = ["Each player starts with the same amount of bombs (3)",
                       "Each player places a bomb in order to destroy crates from which items drop,",
                       "and to kill other players",
@@ -15,7 +16,7 @@ class Menu:
                       "The map consists of indestructible walls in order to make the game more interesting"]
 
     def __init__(self):
-        self.background = pygame.image.load(f"../assets/background.jpeg")
+        self.background = pygame.image.load(f"assets/background.jpeg")
         self.prepareScreen()
 
     def prepareScreen(self):
@@ -26,7 +27,7 @@ class Menu:
         pygame.display.set_caption("BAM!")
 
     def getFont(self, size):
-        return pygame.font.Font(f"../assets/font/font.ttf", size)
+        return pygame.font.Font(f"assets/font/font.ttf", size)
 
     def drawMenuText(self):
         menuText = self.getFont(125).render("BAM", True, "green")
@@ -71,7 +72,7 @@ class Menu:
         for i in range(0, len(self.rulesTextArray)):
             ruleText = self.getFont(13).render(self.rulesTextArray[i], True, "white")
             ruleRect = ruleText.get_rect(center=(CENTER_X_POS, 330 + i * 40))
-            ruleRect.left = CENTER_X_POS/6
+            ruleRect.left = CENTER_X_POS / 6
             self.screen.blit(ruleText, ruleRect)
 
     def rules(self):
@@ -97,72 +98,72 @@ class Menu:
                     exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if backButton.checkForInput(mousePos):
-                        self.showMenu()
+                        return
 
             pygame.display.update()
 
     def drawPlayerInLobby(self, playerId):
-        playerImage = pygame.image.load(f"../assets/player/char" + str(playerId) + "_front_standing.png")
-        if playerId == 1:
+        self.playersLobbyDraw[playerId-1] = True
+
+    def drawAllPlayersInLobby(self):
+        if self.playersLobbyDraw[0]:
+            playerImage = pygame.image.load(LOBBY_PLAYER_IMAGE_1)
             pygame.draw.circle(self.screen, "green", (PLAYER_ONE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
             self.screen.blit(playerImage, (PLAYER_ONE_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
-        elif playerId == 2:
+        if self.playersLobbyDraw[1]:
+            playerImage = pygame.image.load(LOBBY_PLAYER_IMAGE_2)
             pygame.draw.circle(self.screen, "green", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
             self.screen.blit(playerImage, (PLAYER_TWO_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
-        else:
+        if self.playersLobbyDraw[2]:
+            playerImage = pygame.image.load(LOBBY_PLAYER_IMAGE_3)
             pygame.draw.circle(self.screen, "green", (PLAYER_THREE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
             self.screen.blit(playerImage, (PLAYER_THREE_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
 
     def lobby(self):
-        while True:
-            self.drawBackground()
-            self.drawMenuText()
+        self.drawBackground()
+        self.drawMenuText()
 
-            self.drawPlayersTexts()
-            self.drawCircles()
+        self.drawPlayersTexts()
+        self.drawCircles()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+        self.drawAllPlayersInLobby()
 
-            pygame.display.update()
+        pygame.display.update()
 
     def showMenu(self):
-        while True:
-            self.drawBackground()
+        self.drawBackground()
 
-            mousePos = pygame.mouse.get_pos()
+        mousePos = pygame.mouse.get_pos()
 
-            self.drawMenuText()
+        self.drawMenuText()
 
-            playButton = Button(pos=(CENTER_X_POS, 275), textInput="PLAY", font=self.getFont(MENU_TEXT_FONT_SIZE),
-                                baseColor="purple", hoveringColor="red")
+        playButton = Button(pos=(CENTER_X_POS, 275), textInput="PLAY", font=self.getFont(MENU_TEXT_FONT_SIZE),
+                            baseColor="purple", hoveringColor="red")
 
-            rulesButton = Button(pos=(CENTER_X_POS, 425), textInput="RULES", font=self.getFont(MENU_TEXT_FONT_SIZE),
-                                 baseColor="purple", hoveringColor="red")
+        rulesButton = Button(pos=(CENTER_X_POS, 425), textInput="RULES", font=self.getFont(MENU_TEXT_FONT_SIZE),
+                             baseColor="purple", hoveringColor="red")
 
-            quitButton = Button(pos=(CENTER_X_POS, 575), textInput="QUIT", font=self.getFont(MENU_TEXT_FONT_SIZE),
-                                baseColor="purple", hoveringColor="red")
+        quitButton = Button(pos=(CENTER_X_POS, 575), textInput="QUIT", font=self.getFont(MENU_TEXT_FONT_SIZE),
+                            baseColor="purple", hoveringColor="red")
 
-            for button in [playButton, rulesButton, quitButton]:
-                button.changeColor(mousePos)
-                button.update(self.screen)
+        for button in [playButton, rulesButton, quitButton]:
+            button.changeColor(mousePos)
+            button.update(self.screen)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if playButton.checkForInput(mousePos):
+                    return "lobby"
+                elif rulesButton.checkForInput(mousePos):
+                    self.rules()
+                elif quitButton.checkForInput(mousePos):
                     pygame.quit()
                     exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if playButton.checkForInput(mousePos):
-                        self.lobby()
-                    elif rulesButton.checkForInput(mousePos):
-                        self.rules()
-                    elif quitButton.checkForInput(mousePos):
-                        pygame.quit()
-                        exit()
 
-            pygame.display.update()
+        pygame.display.update()
 
 
 menu = Menu()

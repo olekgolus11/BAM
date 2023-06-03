@@ -1,4 +1,4 @@
-class Button():
+class Button:
     def __init__(self, pos, textInput, font, baseColor, hoveringColor):
         self.x = pos[0]
         self.y = pos[1]

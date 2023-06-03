@@ -4,15 +4,17 @@ import pygame
 from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
 from Player import Player
-
+from Menu.Menu import Menu
 
 class Client(ConnectionListener):
     player = None
     screen = None
     clock = None
     map = None
+    menu = None
 
     def __init__(self, host, port):
+        self.menu = Menu()
         self.setupWindow()
         self.Connect((host, port))
         self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen), Player(60, 120, 3, self.screen)]
@@ -99,7 +101,27 @@ class Client(ConnectionListener):
             self.sendBombToServer(self.player.bombsHandler.bombPlantedThisRound)
             self.player.bombsHandler.bombPlantedThisRound = 0
 
+    def drawPlayersInLobby(self):
+        for i in range(0, len(self.imagePathArray)):
+            if self.imagePathArray[str(i+1)] != "":
+                print("draw player" + str(i+1))
+                self.menu.drawPlayerInLobby(i+1)
+                pygame.display.update()
+
     def run(self):
+        state = ""
+        running_menu = True
+        while running_menu:
+            self.update()
+            self.sendPlayerInfo()
+            if state == "lobby":
+                self.menu.lobby()
+                self.drawPlayersInLobby()
+            elif self.menu.showMenu() == "lobby":
+                state = "lobby"
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running_menu = False
         running = True
         while running:
             self.update()

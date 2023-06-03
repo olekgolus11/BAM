@@ -27,3 +27,7 @@ PLAYER_THREE_X_POS = 1040
 
 CENTER_X_POS = 640
 AVATAR_PADDING = 30
+
+LOBBY_PLAYER_IMAGE_1 = f"assets/player/char1_front_standing.png"
+LOBBY_PLAYER_IMAGE_2 = f"assets/player/char2_front_standing.png"
+LOBBY_PLAYER_IMAGE_3 = f"assets/player/char3_front_standing.png"
