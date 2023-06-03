@@ -104,24 +104,33 @@ class Client(ConnectionListener):
     def drawPlayersInLobby(self):
         for i in range(0, len(self.imagePathArray)):
             if self.imagePathArray[str(i+1)] != "":
-                print("draw player" + str(i+1))
                 self.menu.drawPlayerInLobby(i+1)
                 pygame.display.update()
 
+    def allPlayersJoined(self):
+        if self.imagePathArray["1"] != "" and self.imagePathArray["2"] != "" and self.imagePathArray["3"] != "":
+            return True
+        return False
+
     def run(self):
-        state = ""
+        menuState = ""
         running_menu = True
         while running_menu:
             self.update()
             self.sendPlayerInfo()
-            if state == "lobby":
-                self.menu.lobby()
+            if menuState == "lobby":
+                self.menu.showLobby()
                 self.drawPlayersInLobby()
             elif self.menu.showMenu() == "lobby":
-                state = "lobby"
+                menuState = "lobby"
+            if self.allPlayersJoined():
+                self.menu.showCountDownTimer()
+                running_menu = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running_menu = False
+                    pygame.quit()
+
+        self.setupWindow()
         running = True
         while running:
             self.update()

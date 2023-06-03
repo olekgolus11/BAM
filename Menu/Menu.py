@@ -119,7 +119,7 @@ class Menu:
             pygame.draw.circle(self.screen, "green", (PLAYER_THREE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
             self.screen.blit(playerImage, (PLAYER_THREE_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
 
-    def lobby(self):
+    def showLobby(self):
         self.drawBackground()
         self.drawMenuText()
 
@@ -129,6 +129,31 @@ class Menu:
         self.drawAllPlayersInLobby()
 
         pygame.display.update()
+
+    def showCountDownTimer(self):
+        start_ticks = pygame.time.get_ticks()
+        runningTimer = True
+        while runningTimer:
+            self.drawBackground()
+            self.drawMenuText()
+
+            pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+
+            seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+            secondsText = self.getFont(50).render(str(10-int(seconds)), True, "white")
+            secondsRect = secondsText.get_rect(center=(CENTER_X_POS, CIRCLE_Y_POS))
+
+            self.screen.blit(secondsText, secondsRect)
+
+            if seconds > 10:
+                runningTimer = False
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            pygame.display.update()
 
     def showMenu(self):
         self.drawBackground()
