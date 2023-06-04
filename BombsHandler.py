@@ -14,6 +14,7 @@ class BombsHandler:
     def __init__(self, mapFromPlayer: MapClient):
         self.map = mapFromPlayer
         self.everyPlayersBombs = []
+        self.myBombs = []
         self.bombPlantedThisRound = None
         self.isBombPlantedThisRound = False
         self.maxBombsPlanted = 3
@@ -30,6 +31,7 @@ class BombsHandler:
     def addBomb(self, x, y):
         if self.myBombsPlanted < self.maxBombsPlanted and self.isBombPlantedThisRound is False:
             self.bombPlantedThisRound = Bomb(x, y, self.bombRange)
+            self.myBombs.append(Bomb(x, y, self.bombRange))
             self.isBombPlantedThisRound = True
             self.myBombsPlanted += 1
 
@@ -137,5 +139,16 @@ class BombsHandler:
                 bomb.timer += 1
             else:
                 self.everyPlayersBombs.remove(bomb)
+    def updateMyBombs(self):
+        for bomb in self.myBombs:
+            if (bomb.timer > THIRD_BOMB_STATE or self.didBombHitAnotherBomb(bomb) is True) and bomb.isExploded is False:
+                bomb.isExploded = True
+                bomb.timer = THIRD_BOMB_STATE + 1
+            if bomb.timer < FOURTH_BOMB_STATE:
+                bomb.timer += 1
+            else:
+                self.myBombs.remove(bomb)
                 self.myBombsPlanted -= 1
+                print(self.myBombsPlanted)
+
 

@@ -107,6 +107,7 @@ class Client(ConnectionListener):
         for player in self.playersArray:
             if player.playerId == self.player.playerId:
                 player.bombsHandler.updateBombs()
+        self.player.bombsHandler.updateMyBombs()
         self.handleBombPlantedThisRound()
 
     def handlePlayerHit(self):
