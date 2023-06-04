@@ -104,7 +104,9 @@ class Client(ConnectionListener):
         connection.Send({"action": "boardToServer", "board": self.player.map.board})
 
     def handleBombs(self):
-        self.player.bombsHandler.updateBombs()
+        for player in self.playersArray:
+            if player.playerId == self.player.playerId:
+                player.bombsHandler.updateBombs()
         self.handleBombPlantedThisRound()
 
     def run(self):
@@ -118,8 +120,6 @@ class Client(ConnectionListener):
             self.drawAllPlayers()
             self.drawBoard()
             self.sendPlayerInfo()
-            self.player.bombsHandler.updateBombs()
-            self.handleBombPlantedThisRound()
             self.sendBoardToServer()
             self.handleBombs()
             for event in pygame.event.get():
