@@ -5,6 +5,8 @@ from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
 from Player import Player
 from Menu.Menu import Menu
+from utilities import MenuState
+
 
 class Client(ConnectionListener):
     player = None
@@ -113,16 +115,16 @@ class Client(ConnectionListener):
         return False
 
     def run(self):
-        menuState = ""
+        menuState = MenuState.MENU
         running_menu = True
         while running_menu:
             self.update()
             self.sendPlayerInfo()
-            if menuState == "lobby":
+            if menuState == MenuState.LOBBY:
                 self.menu.showLobby()
                 self.drawPlayersInLobby()
-            elif self.menu.showMenu() == "lobby":
-                menuState = "lobby"
+            elif self.menu.showMenu() == MenuState.LOBBY:
+                menuState = MenuState.LOBBY
             if self.allPlayersJoined():
                 self.menu.showCountDownTimer()
                 running_menu = False

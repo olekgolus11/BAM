@@ -3,7 +3,8 @@ class Button:
         self.x = pos[0]
         self.y = pos[1]
         self.font = font
-        self.baseColor, self.hoveringColor = baseColor, hoveringColor
+        self.baseColor = baseColor
+        self.hoveringColor = hoveringColor
         self.textInput = textInput
         self.text = self.font.render(self.textInput, True, self.baseColor)
         self.textRect = self.text.get_rect(center=(self.x, self.y))

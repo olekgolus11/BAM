@@ -1,6 +1,7 @@
 import pygame
 from Menu.Button import Button
 from constants import *
+from utilities import MenuState
 
 
 class Menu:
@@ -64,9 +65,8 @@ class Menu:
         self.screen.blit(rulesText, rulesRect)
 
     def drawBackgroundRectangle(self):
-        height = 500
-        width = 1150
-        pygame.draw.rect(self.screen, "purple", pygame.Rect(CENTER_X_POS - width / 2, 180, width, height), 0, 30)
+        pygame.draw.rect(self.screen, "purple", pygame.Rect(CENTER_X_POS - RULES_RECTANGLE_WIDTH / 2, 180,
+                                                            RULES_RECTANGLE_WIDTH, RULES_RECTANGLE_HEIGHT), 0, 30)
 
     def drawRulesText(self):
         for i in range(0, len(self.rulesTextArray)):
@@ -79,7 +79,6 @@ class Menu:
         while True:
             self.drawBackground()
             self.drawMenuText()
-
             mousePos = pygame.mouse.get_pos()
 
             self.drawBackgroundRectangle()
@@ -157,10 +156,8 @@ class Menu:
 
     def showMenu(self):
         self.drawBackground()
-
-        mousePos = pygame.mouse.get_pos()
-
         self.drawMenuText()
+        mousePos = pygame.mouse.get_pos()
 
         playButton = Button(pos=(CENTER_X_POS, 275), textInput="PLAY", font=self.getFont(MENU_TEXT_FONT_SIZE),
                             baseColor="purple", hoveringColor="red")
@@ -181,7 +178,7 @@ class Menu:
                 exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if playButton.checkForInput(mousePos):
-                    return "lobby"
+                    return MenuState.LOBBY
                 elif rulesButton.checkForInput(mousePos):
                     self.rules()
                 elif quitButton.checkForInput(mousePos):

@@ -31,3 +31,6 @@ AVATAR_PADDING = 30
 LOBBY_PLAYER_IMAGE_1 = f"assets/player/char1_front_standing.png"
 LOBBY_PLAYER_IMAGE_2 = f"assets/player/char2_front_standing.png"
 LOBBY_PLAYER_IMAGE_3 = f"assets/player/char3_front_standing.png"
+
+RULES_RECTANGLE_HEIGHT = 500
+RULES_RECTANGLE_WIDTH = 1150
