@@ -16,3 +16,8 @@ class Direction(Enum):
 class MoveState(Enum):
     STANDING = 'standing'
     RUNNING = 'running'
+
+
+class MenuState(Enum):
+    LOBBY = "lobby"
+    MENU = "menu"
