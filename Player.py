@@ -43,7 +43,7 @@ class Player:
     def isPlayerHit(self):
         self.bombsHandler.updatePlayerTilePosition(self.x, self.y)
         if self.bombsHandler.didBombExplodeOnPlayer() is True:
-            self.alive = False
+            return True
 
     def handlePlayerMovement(self, keyPressed):
         playerShouldMoveInDirection = self.getDirectionFromKey(keyPressed)

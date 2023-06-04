@@ -109,12 +109,16 @@ class Client(ConnectionListener):
                 player.bombsHandler.updateBombs()
         self.handleBombPlantedThisRound()
 
+    def handlePlayerHit(self):
+        if self.playersArray[self.player.playerId - 1].isPlayerHit() is True:
+            self.player.alive = False
+
     def run(self):
         running = True
         while running:
             self.update()
             # self.updatePlayerMap()
-            self.player.isPlayerHit()
+            self.handlePlayerHit()
             if self.player.alive is True:
                 self.player.run()
             self.drawAllPlayers()
