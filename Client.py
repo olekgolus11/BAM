@@ -150,7 +150,7 @@ class Client(ConnectionListener):
         running = True
         while running:
             self.update()
-            # self.updatePlayerMap()
+            self.updatePlayerMap()
             self.handlePlayerHit()
             if self.player.alive is True:
                 self.player.run()

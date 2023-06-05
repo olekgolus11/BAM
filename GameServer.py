@@ -17,7 +17,7 @@ class GameServer(Server):
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
         print('Server launched')
-        self.map = MapServer
+        self.map = MapServer()
 
     def addPlayer(self, channel):
         playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel, "")
