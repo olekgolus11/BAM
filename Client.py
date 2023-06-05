@@ -89,11 +89,8 @@ class Client(ConnectionListener):
             player.draw(self.imagePathArray[str(player.playerId)])
         pygame.display.update()
 
-    def updatePlayerMap(self):
-        self.player.map.updateBoard(self.map.board)
-
     def drawBoard(self):
-        self.map.draw()
+        self.player.map.draw()
 
     def sendBombToServer(self, bomb):
         connection.Send({"action": "newBombFromPlayer", "bomb": self.player.bombsHandler.bombToDictionary(bomb)})
@@ -101,7 +98,24 @@ class Client(ConnectionListener):
     def handleBombPlantedThisRound(self):
         if self.player.bombsHandler.bombPlantedThisRound:
             self.sendBombToServer(self.player.bombsHandler.bombPlantedThisRound)
-            self.player.bombsHandler.bombPlantedThisRound = 0
+            self.player.bombsHandler.bombPlantedThisRound = None
+
+    def updatePlayerMap(self):
+        self.player.map.updateBoard(self.map.board)
+
+    def sendBoardToServer(self):
+        connection.Send({"action": "boardToServer", "board": self.player.map.board})
+
+    def handleBombs(self):
+        for player in self.playersArray:
+            if player.playerId == self.player.playerId:
+                player.bombsHandler.updateBombs()
+        self.player.bombsHandler.updateMyBombs()
+        self.handleBombPlantedThisRound()
+
+    def handlePlayerHit(self):
+        if self.playersArray[self.player.playerId - 1].isPlayerHit() is True:
+            self.player.alive = False
 
     def drawPlayersInLobby(self):
         for i in range(0, len(self.imagePathArray)):
@@ -136,13 +150,15 @@ class Client(ConnectionListener):
         running = True
         while running:
             self.update()
-            self.updatePlayerMap()
-            self.player.run()
+            # self.updatePlayerMap()
+            self.handlePlayerHit()
+            if self.player.alive is True:
+                self.player.run()
             self.drawAllPlayers()
             self.drawBoard()
             self.sendPlayerInfo()
-            self.player.bombsHandler.updateBombTimers()
-            self.handleBombPlantedThisRound()
+            self.sendBoardToServer()
+            self.handleBombs()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -151,6 +167,7 @@ class Client(ConnectionListener):
 
 client = Client("localhost", 3000)
 #TODO: Change spinlock to something better
+client.setupWindow()
 while client.player is None:
     client.update()
 client.run()
