@@ -144,7 +144,7 @@ class Menu:
 
             self.screen.blit(secondsText, secondsRect)
 
-            if seconds > 10:
+            if seconds > 1:
                 runningTimer = False
 
             for event in pygame.event.get():

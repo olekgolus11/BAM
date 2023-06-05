@@ -44,3 +44,9 @@ class ClientHandler(Channel):
     def Board(self, data):
         self.Send({"action": "board", "board": data})
 
+    def Network_playerDead(self, data):
+        self._server.playersInfoArray[data["playerId"] - 1]["alive"] = False
+        if self._server.isRoundOver():
+            # TODO: Handle adding points to player
+            self._server.resetRound()
+

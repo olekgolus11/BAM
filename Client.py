@@ -33,12 +33,15 @@ class Client(ConnectionListener):
             {"id": self.player.playerId, "x": self.player.x, "y": self.player.y, "imagePath": self.player.getImagePath()}})
 
     def Network_playersInfo(self, data):
+        self.player.alive = data["playersInfo"][self.player.playerId - 1]["alive"]
+
         playersInfo = data["playersInfo"]
         for playerInfoElement in playersInfo:
             for player in self.playersArray:
                 if playerInfoElement["id"] == player.playerId:
                     player.x = playerInfoElement["x"]
                     player.y = playerInfoElement["y"]
+                    player.alive = playerInfoElement["alive"]
                     self.imagePathArray[str(player.playerId)] = playerInfoElement["imagePath"]
 
     def Network_playerInfo(self, data):
@@ -67,6 +70,9 @@ class Client(ConnectionListener):
         for player in self.playersArray:
             if player.playerId == self.player.playerId:
                 player.bombsHandler.dictionaryToBomb(data["bomb"])
+
+    def PlayerDead(self):
+        connection.Send({"action": "playerDead", "playerId": self.player.playerId})
 
     def setupWindow(self):
         pygame.init()
@@ -116,6 +122,7 @@ class Client(ConnectionListener):
     def handlePlayerHit(self):
         if self.playersArray[self.player.playerId - 1].isPlayerHit() is True:
             self.player.alive = False
+            self.PlayerDead()
 
     def drawPlayersInLobby(self):
         for i in range(0, len(self.imagePathArray)):

@@ -9,3 +9,4 @@ class PlayerInfo:
         self.id = id
         self.imagePath = imagePath
         self.channel = channel
+        self.alive = True
