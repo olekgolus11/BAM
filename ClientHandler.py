@@ -39,7 +39,7 @@ class ClientHandler(Channel):
     def Network_boardToServer(self, data):
         for i in range(0, len(self._server.playersInfoArray)):
             playerChannel = self._server.playersInfoArray[i]["channel"]
-            playerChannel.Board(data)
+            playerChannel.Board(data["board"])
 
     def Board(self, data):
         self.Send({"action": "board", "board": data})
