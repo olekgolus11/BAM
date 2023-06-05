@@ -2,7 +2,6 @@ from __future__ import print_function
 from sys import exit
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
-
 from Map.MapClient import MapClient
 from Player import Player
 

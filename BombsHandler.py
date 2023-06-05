@@ -129,7 +129,6 @@ class BombsHandler:
         return shouldAnotherBombExplode
 
     def updateBombs(self):
-        # print(self.everyPlayersBombs)
         for bomb in self.everyPlayersBombs:
             if bomb.timer > THIRD_BOMB_STATE:
                 bomb.explodeBomb()
@@ -139,6 +138,7 @@ class BombsHandler:
                 bomb.timer += 1
             else:
                 self.everyPlayersBombs.remove(bomb)
+
     def updateMyBombs(self):
         for bomb in self.myBombs:
             if (bomb.timer > THIRD_BOMB_STATE or self.didBombHitAnotherBomb(bomb) is True) and bomb.isExploded is False:
@@ -149,6 +149,5 @@ class BombsHandler:
             else:
                 self.myBombs.remove(bomb)
                 self.myBombsPlanted -= 1
-                print(self.myBombsPlanted)
 
 
