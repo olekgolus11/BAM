@@ -14,9 +14,11 @@ class Client(ConnectionListener):
     clock = None
     map = None
     menu = None
+    score = None
 
     def __init__(self, host, port):
         self.menu = Menu()
+        self.score = 0
         self.setupWindow()
         self.Connect((host, port))
         self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen), Player(60, 120, 3, self.screen)]
@@ -79,6 +81,10 @@ class Client(ConnectionListener):
             if player.playerId == self.player.playerId:
                 player.bombsHandler.dictionaryToBomb(data["bomb"])
 
+    def Network_pointToWinner(self, data):
+        print("You won!")
+        self.score += 1
+
     def PlayerDead(self):
         connection.Send({"action": "playerDead", "playerId": self.player.playerId})
 
@@ -129,7 +135,6 @@ class Client(ConnectionListener):
 
     def handlePlayerHit(self):
         if self.player.isPlayerHit() is True and self.player.alive is True:
-            print(self.player.alive)
             self.player.alive = False
             self.PlayerDead()
 
@@ -166,7 +171,7 @@ class Client(ConnectionListener):
         running = True
         while running:
             self.update()
-            self.updatePlayerMap()
+            # self.updatePlayerMap()
             self.handlePlayerHit()
             if self.player.alive is True:
                 self.player.run()
