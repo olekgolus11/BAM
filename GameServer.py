@@ -12,12 +12,14 @@ class GameServer(Server):
     channelClass = ClientHandler
     idArray = [0, 0, 0]
     playersInfoArray = []
+    playersPointsArray = []
 
     def __init__(self, *args, **kwargs):
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
         print('Server launched')
         self.map = MapServer()
+        self.playersPointsArray = [0, 0, 0]
 
     def addPlayer(self, channel):
         playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel, "")
@@ -68,10 +70,23 @@ class GameServer(Server):
                  "alive": player["alive"]})
         return playersInfo
 
+    def getWinner(self):
+        for i in range(0, len(self.playersInfoArray)):
+            if self.playersInfoArray[i]["alive"] is True:
+                return self.playersInfoArray[i]["id"]
+
     def sendInfoToPlayer(self, channel):
         for i in range(0, len(self.playersInfoArray)):
             if self.playersInfoArray[i]["channel"] == channel:
                 channel.PlayerInfo(self.playersInfoArray[i])
+
+    def addPointToWinner(self):
+        self.playersPointsArray[self.getWinner() - 1] += 1
+        self.sendPointToWinner()
+
+    def sendPointToWinner(self):
+        playerChannel = self.playersInfoArray[self.getWinner() - 1]["channel"]
+        playerChannel.PointToWinner()
 
     def sendBoardToPlayer(self, channel):
         channel.Board(self.map.board)
@@ -97,6 +112,7 @@ class GameServer(Server):
             sleep(0.0001)
 
     def resetRound(self):
+        sleep(2)
         print("Resetting round")
         # self.map = MapServer()
         for i in range(0, len(self.playersInfoArray)):
