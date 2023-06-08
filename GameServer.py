@@ -12,14 +12,12 @@ class GameServer(Server):
     channelClass = ClientHandler
     idArray = [0, 0, 0]
     playersInfoArray = []
-    isRoundResetting = None
 
     def __init__(self, *args, **kwargs):
         Server.__init__(self, *args, **kwargs)
         self.players = WeakKeyDictionary()
         print('Server launched')
         self.map = MapServer()
-        self.isRoundResetting = False
 
     def addPlayer(self, channel):
         playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel, "")
@@ -46,9 +44,7 @@ class GameServer(Server):
             if self.playersInfoArray[i]["channel"] == channel:
                 self.playersInfoArray.pop(i)
 
-    def sendAllPlayersDataToAll(self, forceSend=False):
-        if self.isRoundResetting and not forceSend:
-            return
+    def sendAllPlayersDataToAll(self):
         playersInfo = self.preparePlayerInfoArray()
         for i in range(0, len(self.playersInfoArray)):
             playerChannel = self.playersInfoArray[i]["channel"]
@@ -77,7 +73,7 @@ class GameServer(Server):
     def isRoundOver(self):
         alivePlayers = 0
         for i in range(0, len(self.playersInfoArray)):
-            if self.playersInfoArray[i]["alive"]:
+            if self.playersInfoArray[i]["alive"] is True:
                 alivePlayers += 1
         return alivePlayers <= 1
 
@@ -96,8 +92,6 @@ class GameServer(Server):
 
     def resetRound(self):
         print("Resetting round")
-        sleep(1)
-        self.isRoundResetting = True
         # self.map = MapServer()
         for i in range(0, len(self.playersInfoArray)):
             self.playersInfoArray[i]["x"] = TILE_SIZE
@@ -105,8 +99,7 @@ class GameServer(Server):
             self.playersInfoArray[i]["alive"] = True
         for i in range(0, len(self.playersInfoArray)):
             self.playersInfoArray[i]["channel"].Board(self.map.board)
-        self.sendAllPlayersDataToAll(True)
-        sleep(1)
+        self.sendAllPlayersDataToAll()
 
 
 # get command line argument of server, port

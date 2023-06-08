@@ -33,20 +33,19 @@ class Client(ConnectionListener):
             {"id": self.player.playerId, "x": self.player.x, "y": self.player.y, "imagePath": self.player.getImagePath()}})
 
     def Network_playersInfo(self, data):
-        self.player.alive = data["playersInfo"][self.player.playerId - 1]["alive"]
-
         playersInfo = data["playersInfo"]
         for playerInfoElement in playersInfo:
             for player in self.playersArray:
                 if playerInfoElement["id"] == player.playerId:
-                    player.x = playerInfoElement["x"]
-                    player.y = playerInfoElement["y"]
+                    if player.playerId != self.player.playerId:
+                        player.x = playerInfoElement["x"]
+                        player.y = playerInfoElement["y"]
                     player.alive = playerInfoElement["alive"]
                     self.imagePathArray[str(player.playerId)] = playerInfoElement["imagePath"]
 
     def Network_playerInfo(self, data):
         info = data["playerInfo"]
-        self.player = Player(info["x"], info["y"], info["id"], self.screen)
+        self.player = self.playersArray[info["id"] - 1]
         self.imagePathArray[str(self.player.playerId)] = info["imagePath"]
         print("My info: ", "id: ", self.player.playerId,
               "x: ", self.player.x, "y: ", self.player.y, "imagePath: ", self.imagePathArray[str(self.player.playerId)])
@@ -120,8 +119,7 @@ class Client(ConnectionListener):
         self.handleBombPlantedThisRound()
 
     def handlePlayerHit(self):
-        if self.playersArray[self.player.playerId - 1].isPlayerHit() is True:
-            self.player.alive = False
+        if self.player.isPlayerHit() is True and self.player.alive is True:
             self.PlayerDead()
 
     def drawPlayersInLobby(self):
