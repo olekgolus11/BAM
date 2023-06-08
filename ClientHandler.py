@@ -46,6 +46,7 @@ class ClientHandler(Channel):
 
     def Network_playerDead(self, data):
         self._server.playersInfoArray[data["playerId"] - 1]["alive"] = False
+        print(data["playerId"], "is dead")
         if self._server.isRoundOver():
             # TODO: Handle adding points to player
             self._server.resetRound()
