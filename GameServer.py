@@ -50,6 +50,12 @@ class GameServer(Server):
             playerChannel = self.playersInfoArray[i]["channel"]
             playerChannel.PlayersInfo(playersInfo)
 
+    def sendAllResetPlayersDataToAll(self):
+        playersInfo = self.preparePlayerInfoArray()
+        for i in range(0, len(self.playersInfoArray)):
+            playerChannel = self.playersInfoArray[i]["channel"]
+            playerChannel.ResetPlayersInfo(playersInfo)
+
     def preparePlayerInfoArray(self):
         playersInfo = []
         for i in range(0, len(self.playersInfoArray)):
@@ -99,7 +105,7 @@ class GameServer(Server):
             self.playersInfoArray[i]["alive"] = True
         for i in range(0, len(self.playersInfoArray)):
             self.playersInfoArray[i]["channel"].Board(self.map.board)
-        self.sendAllPlayersDataToAll()
+        self.sendAllResetPlayersDataToAll()
 
 
 # get command line argument of server, port
