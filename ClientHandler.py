@@ -28,6 +28,9 @@ class ClientHandler(Channel):
     def PlayersInfo(self, data):
         self.Send({"action": "playersInfo", "playersInfo": data})
 
+    def ResetPlayersInfo(self, data):
+        self.Send({"action": "resetPlayersInfo", "playersInfo": data})
+
     def Message(self, data):
         self.Send({"action": "message", "message": data})
 
@@ -50,4 +53,3 @@ class ClientHandler(Channel):
         if self._server.isRoundOver():
             # TODO: Handle adding points to player
             self._server.resetRound()
-

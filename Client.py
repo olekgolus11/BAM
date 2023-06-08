@@ -40,6 +40,15 @@ class Client(ConnectionListener):
                     if player.playerId != self.player.playerId:
                         player.x = playerInfoElement["x"]
                         player.y = playerInfoElement["y"]
+                    self.imagePathArray[str(player.playerId)] = playerInfoElement["imagePath"]
+
+    def Network_resetPlayersInfo(self, data):
+        playersInfo = data["playersInfo"]
+        for playerInfoElement in playersInfo:
+            for player in self.playersArray:
+                if playerInfoElement["id"] == player.playerId:
+                    player.x = playerInfoElement["x"]
+                    player.y = playerInfoElement["y"]
                     player.alive = playerInfoElement["alive"]
                     self.imagePathArray[str(player.playerId)] = playerInfoElement["imagePath"]
 
@@ -120,6 +129,8 @@ class Client(ConnectionListener):
 
     def handlePlayerHit(self):
         if self.player.isPlayerHit() is True and self.player.alive is True:
+            print(self.player.alive)
+            self.player.alive = False
             self.PlayerDead()
 
     def drawPlayersInLobby(self):
