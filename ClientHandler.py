@@ -33,6 +33,7 @@ class ClientHandler(Channel):
 
     def RoundOver(self):
         self.Send({"action": "roundOver", "winnerId": self._server.getWinner()})
+        self.Pump()
 
     def Message(self, data):
         self.Send({"action": "message", "message": data})
@@ -52,6 +53,7 @@ class ClientHandler(Channel):
 
     def PointToWinner(self):
         self.Send({"action": "pointToWinner", "winner": True})
+        self.Pump()
 
     def Network_playerDead(self, data):
         print(self._server.playersPointsArray)

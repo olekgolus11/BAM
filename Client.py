@@ -88,14 +88,11 @@ class Client(ConnectionListener):
                 player.bombsHandler.dictionaryToBomb(data["bomb"])
 
     def Network_pointToWinner(self, data):
-        print("You won!")
         self.score += 1
         connection.Pump()
         self.Pump()
 
     def Network_roundOver(self, data):
-        print("Round over!")
-        print("Winner id: ", data["winnerId"])
         connection.Pump()
         self.Pump()
         self.isRoundOver = True
@@ -106,9 +103,11 @@ class Client(ConnectionListener):
         connection.Send({"action": "playerDead", "playerId": self.player.playerId})
 
     def drawRoundScoreMessage(self):
+        if not self.isRoundOver:
+            return
         if self.isRoundWon is True:
-            print('kurwa wygralem!')
             self.player.drawYouWon()
+        self.player.drawScore(self.score)
 
     def setupWindow(self):
         pygame.init()
