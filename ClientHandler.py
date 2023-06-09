@@ -35,6 +35,10 @@ class ClientHandler(Channel):
         self.Send({"action": "roundOver", "winnerId": self._server.getWinner()})
         self.Pump()
 
+    def ResetGame(self):
+        self.Send({"action": "resetGame", "resetGame": True})
+        self.Pump()
+
     def Message(self, data):
         self.Send({"action": "message", "message": data})
 
@@ -63,5 +67,7 @@ class ClientHandler(Channel):
             self._server.sendRoundOverToAllPlayers()
             self._server.addPointToWinner()
             self._server.resetRound()
+        if self._server.isGameOver():
+            self._server.resetGame()
         print(self._server.playersPointsArray)
 
