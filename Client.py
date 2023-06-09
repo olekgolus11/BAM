@@ -203,8 +203,10 @@ class Client(ConnectionListener):
         self.update()
         self.sendPlayerInfo()
         if self.menuState == MenuState.LOBBY:
-            self.menu.showLobby()
-            self.drawPlayersInLobby()
+            if self.menu.showLobby() == MenuState.MENU:
+                self.menuState = MenuState.MENU
+            else:
+                self.drawPlayersInLobby()
         elif self.menu.showMenu() == MenuState.LOBBY:
             self.menuState = MenuState.LOBBY
         if self.allPlayersJoined():

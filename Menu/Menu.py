@@ -116,29 +116,45 @@ class Menu:
             pygame.draw.circle(self.screen, "green", (PLAYER_THREE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
             self.screen.blit(playerImage, (PLAYER_THREE_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
 
-    def showLobby(self):
+    def showLobbyBackground(self):
         self.drawBackground()
         self.drawMenuText()
 
         self.drawPlayersTexts()
         self.drawCircles()
-
         self.drawAllPlayersInLobby()
 
-        pygame.display.update()
+    def showLobby(self):
+        self.showLobbyBackground()
+        mousePos = pygame.mouse.get_pos()
+
+        backButton = Button(pos=(CENTER_X_POS, 640), textInput="BACK", font=getFont(50),
+                            baseColor="white", hoveringColor="red")
+
+        backButton.changeColor(mousePos)
+        backButton.update(self.screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if backButton.checkForInput(mousePos):
+                    return MenuState.MENU
 
     def showCountDownTimer(self):
         start_ticks = pygame.time.get_ticks()
         runningTimer = True
+        for i in range(0, 3):
+            self.playersLobbyDraw[i] = True
         while runningTimer:
-            self.drawBackground()
-            self.drawMenuText()
+            self.showLobbyBackground()
 
-            pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+            pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, 550), CIRCLE_RADIUS, CIRCLE_RADIUS)
 
             seconds = (pygame.time.get_ticks() - start_ticks) / 1000
             secondsText = getFont(50).render(str(SECONDS_TO_START_GAME-int(seconds)), True, "white")
-            secondsRect = secondsText.get_rect(center=(CENTER_X_POS, CIRCLE_Y_POS))
+            secondsRect = secondsText.get_rect(center=(CENTER_X_POS, 550))
 
             self.screen.blit(secondsText, secondsRect)
 
