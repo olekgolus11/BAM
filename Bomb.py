@@ -17,9 +17,11 @@ class Bomb:
         self.explosionSpreadUp = True
         self.explosionSpreadDown = True
         self.explosionSpreadRight = True
+        self.sound = pygame.mixer.Sound("assets/sounds/explosion.mp3")
 
     def explodeBomb(self):
         if self.isExploded is False:
+            self.sound.play()
             self.timer = THIRD_BOMB_STATE + 1
             self.isExploded = True
             self.destroyCrates()
