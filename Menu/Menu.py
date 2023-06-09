@@ -128,7 +128,7 @@ class Menu:
         self.showLobbyBackground()
         mousePos = pygame.mouse.get_pos()
 
-        backButton = Button(pos=(CENTER_X_POS, 640), textInput="BACK", font=getFont(50),
+        backButton = Button(pos=(CENTER_X_POS, JOIN_BACK_BUTTON_Y_POS), textInput="BACK", font=getFont(50),
                             baseColor="white", hoveringColor="red")
 
         backButton.changeColor(mousePos)
@@ -151,12 +151,12 @@ class Menu:
         self.screen.blit(inputText, inputRect)
 
     def showJoinScreen(self):
-        textField = pygame.Rect(CENTER_X_POS-150, 305, 300, 50)
+        textField = pygame.Rect(CENTER_X_POS-TEXTFIELD_WIDTH/2, TEXTFIELD_Y_POS, TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT)
         input = ''
         textFieldActive = False
         joinScreenRunning = True
 
-        joinButton = Button(pos=(CENTER_X_POS, 640), textInput="JOIN", font=getFont(50),
+        joinButton = Button(pos=(CENTER_X_POS, JOIN_BACK_BUTTON_Y_POS), textInput="JOIN", font=getFont(50),
                             baseColor="white", hoveringColor="red")
 
         while joinScreenRunning:
