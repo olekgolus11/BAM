@@ -17,10 +17,12 @@ class Client(ConnectionListener):
     score = None
     isRoundOver = None
     isRoundWon = None
-    running_menu = None
+    runningMenu = None
+    menuState = None
 
     def __init__(self, host, port):
-        self.running_menu = True
+        self.runningMenu = True
+        self.menuState = MenuState.MENU
         self.menu = Menu()
         self.score = 0
         self.setupWindow()
@@ -106,7 +108,7 @@ class Client(ConnectionListener):
         self.isRoundOver = False
         self.isRoundWon = None
         self.score = 0
-        self.running_menu = True
+        self.runningMenu = True
         self.player.bombsHandler.bombs = []
         self.player.bombsHandler.myBombs = []
         connection.Pump()
@@ -198,26 +200,25 @@ class Client(ConnectionListener):
         self.handleBombs()
 
     def runMenu(self):
-        menuState = MenuState.MENU
         self.update()
         self.sendPlayerInfo()
-        if menuState == MenuState.LOBBY:
+        if self.menuState == MenuState.LOBBY:
             self.menu.showLobby()
             self.drawPlayersInLobby()
         elif self.menu.showMenu() == MenuState.LOBBY:
-            menuState = MenuState.LOBBY
+            self.menuState = MenuState.LOBBY
         if self.allPlayersJoined():
             self.menu.showCountDownTimer()
-            self.running_menu = False
+            self.runningMenu = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
     def run(self):
-        self.running_menu = True
+        self.runningMenu = True
         running = True
         while running:
-            if self.running_menu:
+            if self.runningMenu:
                 self.runMenu()
             else:
                 self.runGame()
