@@ -1,5 +1,7 @@
 from __future__ import print_function
 from sys import exit
+from time import sleep
+
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
@@ -21,17 +23,21 @@ class Client(ConnectionListener):
     menuState = None
 
     def __init__(self, host, port):
+        self.setupWindow()
         self.runningMenu = True
         self.menuState = MenuState.MENU
         self.menu = Menu()
         self.score = 0
-        self.setupWindow()
-        self.Connect((host, port))
+        self.host = host
+        self.port = port
         self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen),
                              Player(60, 120, 3, self.screen)]
         self.imagePathArray = {"1": "", "2": "", "3": ""}
         self.isRoundOver = False
         print("Client started")
+
+    def connectClient(self):
+        self.Connect((self.host, self.port))
 
     def Network_message(self, data):
         print("got:", data['message'])
@@ -230,7 +236,9 @@ class Client(ConnectionListener):
         pygame.quit()
 
 
-client = Client("localhost", 3000)
+client = Client("", 3000)
+client.host = client.menu.showJoinScreen()
+client.connectClient()
 # TODO: Change spinlock to something better
 client.setupWindow()
 while client.player is None:

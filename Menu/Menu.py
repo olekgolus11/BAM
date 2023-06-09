@@ -142,6 +142,58 @@ class Menu:
                 if backButton.checkForInput(mousePos):
                     return MenuState.MENU
 
+    def drawTextField(self, textFieldRect, color):
+        pygame.draw.rect(self.screen, color, textFieldRect)
+
+    def drawInput(self, text):
+        inputText = getFont(13).render(text, True, "black")
+        inputRect = inputText.get_rect(center=(CENTER_X_POS, 330))
+        self.screen.blit(inputText, inputRect)
+
+    def showJoinScreen(self):
+        textField = pygame.Rect(CENTER_X_POS-150, 305, 300, 50)
+        input = ''
+        textFieldActive = False
+        joinScreenRunning = True
+
+        joinButton = Button(pos=(CENTER_X_POS, 640), textInput="JOIN", font=getFont(50),
+                            baseColor="white", hoveringColor="red")
+
+        while joinScreenRunning:
+            self.drawBackground()
+            self.drawMenuText()
+
+            if textFieldActive:
+                textFieldColor = "green"
+            else:
+                textFieldColor = "purple"
+
+            mousePos = pygame.mouse.get_pos()
+            joinButton.changeColor(mousePos)
+            joinButton.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if textField.collidepoint(mousePos):
+                        textFieldActive = True
+                    else:
+                        textFieldActive = False
+                        if joinButton.checkForInput(mousePos):
+                            return input
+                if event.type == pygame.KEYDOWN:
+                    if textFieldActive:
+                        if event.key == pygame.K_BACKSPACE:
+                            input = input[:-1]
+                        else:
+                            input += event.unicode
+
+            self.drawTextField(textField, textFieldColor)
+            self.drawInput(input)
+            pygame.display.update()
+
     def showCountDownTimer(self):
         start_ticks = pygame.time.get_ticks()
         runningTimer = True
