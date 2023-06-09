@@ -5,7 +5,7 @@ from PodSixNet.Server import Server
 from ClientHandler import ClientHandler
 from PlayerInfo import PlayerInfo
 from Map.MapServer import MapServer
-from constants import TILE_SIZE, ROUNDS_TO_WIN_GAME, RESET_ROUND_TIME
+from constants import TILE_SIZE, ROUNDS_TO_WIN_GAME, RESET_ROUND_TIME, PORT
 
 
 class GameServer(Server):
@@ -144,5 +144,5 @@ class GameServer(Server):
 
 
 # get command line argument of server, port
-s = GameServer(localaddr=('localhost', 3000))
+s = GameServer(localaddr=('localhost', PORT))
 s.launch()

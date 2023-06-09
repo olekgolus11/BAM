@@ -1,13 +1,12 @@
 from __future__ import print_function
 from sys import exit
-from time import sleep
-
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
 from Player import Player
 from Menu.Menu import Menu
 from utilities import MenuState
+from constants import PORT
 
 
 class Client(ConnectionListener):
@@ -236,7 +235,7 @@ class Client(ConnectionListener):
         pygame.quit()
 
 
-client = Client("", 3000)
+client = Client("", PORT)
 client.host = client.menu.showJoinScreen()
 client.connectClient()
 # TODO: Change spinlock to something better

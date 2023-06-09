@@ -1,6 +1,7 @@
 import math
 
 FPS = 60
+PORT = 3000
 
 BOARD_WIDTH = 21
 BOARD_HEIGHT = 11
