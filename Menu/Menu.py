@@ -2,6 +2,7 @@ import pygame
 from Menu.Button import Button
 from constants import *
 from utilities import MenuState
+from utilities import getFont
 
 
 class Menu:
@@ -27,23 +28,20 @@ class Menu:
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("BAM!")
 
-    def getFont(self, size):
-        return pygame.font.Font(f"assets/font/font.ttf", size)
-
     def drawMenuText(self):
-        menuText = self.getFont(125).render("BAM", True, "green")
+        menuText = getFont(125).render("BAM", True, "green")
         menuRect = menuText.get_rect(center=(CENTER_X_POS, 100))
 
         self.screen.blit(menuText, menuRect)
 
     def drawPlayersTexts(self):
-        playerOneText = self.getFont(PLAYER_FONT_SIZE).render("Player 1", True, "black")
+        playerOneText = getFont(PLAYER_FONT_SIZE).render("Player 1", True, "black")
         playerOneRect = playerOneText.get_rect(center=(PLAYER_ONE_X_POS, PLAYER_TEXT_Y_POS))
 
-        playerTwoText = self.getFont(PLAYER_FONT_SIZE).render("Player 2", True, "black")
+        playerTwoText = getFont(PLAYER_FONT_SIZE).render("Player 2", True, "black")
         playerTwoRect = playerOneText.get_rect(center=(PLAYER_TWO_X_POS, PLAYER_TEXT_Y_POS))
 
-        playerThreeText = self.getFont(PLAYER_FONT_SIZE).render("Player 3", True, "black")
+        playerThreeText = getFont(PLAYER_FONT_SIZE).render("Player 3", True, "black")
         playerThreeRect = playerOneText.get_rect(center=(PLAYER_THREE_X_POS, PLAYER_TEXT_Y_POS))
 
         self.screen.blit(playerOneText, playerOneRect)
@@ -59,7 +57,7 @@ class Menu:
         self.screen.blit(self.background, (0, 0))
 
     def drawRulesMainText(self):
-        rulesText = self.getFont(75).render("RULES", True, "white")
+        rulesText = getFont(75).render("RULES", True, "white")
         rulesRect = rulesText.get_rect(center=(CENTER_X_POS, 250))
 
         self.screen.blit(rulesText, rulesRect)
@@ -70,7 +68,7 @@ class Menu:
 
     def drawRulesText(self):
         for i in range(0, len(self.rulesTextArray)):
-            ruleText = self.getFont(13).render(self.rulesTextArray[i], True, "white")
+            ruleText = getFont(13).render(self.rulesTextArray[i], True, "white")
             ruleRect = ruleText.get_rect(center=(CENTER_X_POS, 330 + i * 40))
             ruleRect.left = CENTER_X_POS / 6
             self.screen.blit(ruleText, ruleRect)
@@ -85,7 +83,7 @@ class Menu:
             self.drawRulesMainText()
             self.drawRulesText()
 
-            backButton = Button(pos=(CENTER_X_POS, 640), textInput="BACK", font=self.getFont(50),
+            backButton = Button(pos=(CENTER_X_POS, 640), textInput="BACK", font=getFont(50),
                                 baseColor="white", hoveringColor="red")
 
             backButton.changeColor(mousePos)
@@ -139,7 +137,7 @@ class Menu:
             pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
 
             seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-            secondsText = self.getFont(50).render(str(10-int(seconds)), True, "white")
+            secondsText = getFont(50).render(str(10-int(seconds)), True, "white")
             secondsRect = secondsText.get_rect(center=(CENTER_X_POS, CIRCLE_Y_POS))
 
             self.screen.blit(secondsText, secondsRect)
@@ -159,13 +157,13 @@ class Menu:
         self.drawMenuText()
         mousePos = pygame.mouse.get_pos()
 
-        playButton = Button(pos=(CENTER_X_POS, 275), textInput="PLAY", font=self.getFont(MENU_TEXT_FONT_SIZE),
+        playButton = Button(pos=(CENTER_X_POS, 275), textInput="PLAY", font=getFont(MENU_TEXT_FONT_SIZE),
                             baseColor="purple", hoveringColor="red")
 
-        rulesButton = Button(pos=(CENTER_X_POS, 425), textInput="RULES", font=self.getFont(MENU_TEXT_FONT_SIZE),
+        rulesButton = Button(pos=(CENTER_X_POS, 425), textInput="RULES", font=getFont(MENU_TEXT_FONT_SIZE),
                              baseColor="purple", hoveringColor="red")
 
-        quitButton = Button(pos=(CENTER_X_POS, 575), textInput="QUIT", font=self.getFont(MENU_TEXT_FONT_SIZE),
+        quitButton = Button(pos=(CENTER_X_POS, 575), textInput="QUIT", font=getFont(MENU_TEXT_FONT_SIZE),
                             baseColor="purple", hoveringColor="red")
 
         for button in [playButton, rulesButton, quitButton]:

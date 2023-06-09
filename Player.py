@@ -1,8 +1,7 @@
 import pygame
-import constants
+from constants import *
 from Map.MapClient import MapClient
-from constants import TILE_SIZE
-from utilities import getTileCoordinates
+from utilities import getTileCoordinates, getFont
 from utilities import Direction
 from utilities import MoveState
 from BombsHandler import BombsHandler
@@ -23,7 +22,7 @@ class Player:
         self.speed = 3
         self.alive = True
         self.frameState = 0
-        self.fullMoveTimeframe = constants.FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
+        self.fullMoveTimeframe = FPS * self.PLAYER_ANIMATION_SPEED_MULTIPLIER
         self.map = MapClient(screen)
         self.bombsHandler = BombsHandler(self.map)
         self.shouldPlayerMove = True
@@ -33,6 +32,19 @@ class Player:
             image = pygame.image.load(imagePath)
             self.screen.blit(image, (self.x, self.y))
         self.bombsHandler.drawBombs(self.screen)
+
+    def drawYouDied(self):
+        surface_alpha = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        surface_alpha_gray = surface_alpha.convert_alpha()
+        surface_alpha_gray.fill((0, 0, 0, 128))
+        self.screen.blit(surface_alpha_gray, (0, 0))
+        text = getFont(125).render("YOU DIED", True, "red")
+        rect = text.get_rect(center=(CENTER_X_POS, CENTER_Y_POS))
+        self.screen.blit(text, rect)
+
+
+
+
 
     def run(self):
         keyPressed = pygame.key.get_pressed()
