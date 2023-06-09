@@ -25,11 +25,11 @@ class Client(ConnectionListener):
         self.score = 0
         self.setupWindow()
         self.Connect((host, port))
-        self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen), Player(60, 120, 3, self.screen)]
+        self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen),
+                             Player(60, 120, 3, self.screen)]
         self.imagePathArray = {"1": "", "2": "", "3": ""}
         self.isRoundOver = False
         print("Client started")
-
 
     def Network_message(self, data):
         print("got:", data['message'])
@@ -38,7 +38,8 @@ class Client(ConnectionListener):
 
     def sendPlayerInfo(self):
         connection.Send({"action": "playerInfo", "playerInfo":
-            {"id": self.player.playerId, "x": self.player.x, "y": self.player.y, "imagePath": self.player.getImagePath()}})
+            {"id": self.player.playerId, "x": self.player.x, "y": self.player.y,
+             "imagePath": self.player.getImagePath()}})
 
     def Network_playersInfo(self, data):
         playersInfo = data["playersInfo"]
@@ -173,8 +174,8 @@ class Client(ConnectionListener):
 
     def drawPlayersInLobby(self):
         for i in range(0, len(self.imagePathArray)):
-            if self.imagePathArray[str(i+1)] != "":
-                self.menu.drawPlayerInLobby(i+1)
+            if self.imagePathArray[str(i + 1)] != "":
+                self.menu.drawPlayerInLobby(i + 1)
                 pygame.display.update()
 
     def allPlayersJoined(self):
@@ -182,40 +183,45 @@ class Client(ConnectionListener):
             return True
         return False
 
-    def run(self):
-        menuState = MenuState.MENU
-        self.running_menu = True
-        while self.running_menu:
-            self.update()
-            self.sendPlayerInfo()
-            if menuState == MenuState.LOBBY:
-                self.menu.showLobby()
-                self.drawPlayersInLobby()
-            elif self.menu.showMenu() == MenuState.LOBBY:
-                menuState = MenuState.LOBBY
-            if self.allPlayersJoined():
-                self.menu.showCountDownTimer()
-                self.running_menu = False
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
+    def runGame(self):
+        self.update()
+        # self.updatePlayerMap()
+        self.handlePlayerHit()
+        self.drawRoundScoreMessage()
+        if self.player.alive is True:
+            self.player.run()
+        else:
+            self.player.drawYouDied()
+        self.drawAllPlayers()
+        self.drawBoard()
+        self.sendPlayerInfo()
+        self.sendBoardToServer()
+        self.handleBombs()
 
-        self.setupWindow()
+    def runMenu(self):
+        menuState = MenuState.MENU
+        self.update()
+        self.sendPlayerInfo()
+        if menuState == MenuState.LOBBY:
+            self.menu.showLobby()
+            self.drawPlayersInLobby()
+        elif self.menu.showMenu() == MenuState.LOBBY:
+            menuState = MenuState.LOBBY
+        if self.allPlayersJoined():
+            self.menu.showCountDownTimer()
+            self.running_menu = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+    def run(self):
+        self.running_menu = True
         running = True
         while running:
-            self.update()
-            # self.updatePlayerMap()
-            self.handlePlayerHit()
-            self.drawRoundScoreMessage()
-            if self.player.alive is True:
-                self.player.run()
+            if self.running_menu:
+                self.runMenu()
             else:
-                self.player.drawYouDied()
-            self.drawAllPlayers()
-            self.drawBoard()
-            self.sendPlayerInfo()
-            self.sendBoardToServer()
-            self.handleBombs()
+                self.runGame()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -223,7 +229,7 @@ class Client(ConnectionListener):
 
 
 client = Client("localhost", 3000)
-#TODO: Change spinlock to something better
+# TODO: Change spinlock to something better
 client.setupWindow()
 while client.player is None:
     client.update()
