@@ -197,16 +197,16 @@ class Menu:
     def showCountDownTimer(self):
         start_ticks = pygame.time.get_ticks()
         runningTimer = True
-        for i in range(0, 3):
+        for i in range(0, len(self.playersLobbyDraw)):
             self.playersLobbyDraw[i] = True
         while runningTimer:
             self.showLobbyBackground()
 
-            pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, 550), CIRCLE_RADIUS, CIRCLE_RADIUS)
+            pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, COUNTER_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
 
             seconds = (pygame.time.get_ticks() - start_ticks) / 1000
             secondsText = getFont(50).render(str(SECONDS_TO_START_GAME-int(seconds)), True, "white")
-            secondsRect = secondsText.get_rect(center=(CENTER_X_POS, 550))
+            secondsRect = secondsText.get_rect(center=(CENTER_X_POS, COUNTER_Y_POS))
 
             self.screen.blit(secondsText, secondsRect)
 
