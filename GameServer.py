@@ -92,8 +92,6 @@ class GameServer(Server):
         for i in range(0, len(self.playersInfoArray)):
             playerChannel = self.playersInfoArray[i]["channel"]
             playerChannel.RoundOver()
-            self.Pump()
-            playerChannel.Pump()
 
     def sendBoardToPlayer(self, channel):
         channel.Board(self.map.board)

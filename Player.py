@@ -51,6 +51,11 @@ class Player:
         rect = text.get_rect(center=(CENTER_X_POS, CENTER_Y_POS))
         self.screen.blit(text, rect)
 
+    def drawScore(self, score):
+        text = getFont(30).render("Score: " + str(score), True, "white")
+        rect = text.get_rect(center=(CENTER_X_POS, 50))
+        self.screen.blit(text, rect)
+
     def run(self):
         keyPressed = pygame.key.get_pressed()
         self.handlePlayerMovement(keyPressed)
