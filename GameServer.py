@@ -5,12 +5,12 @@ from PodSixNet.Server import Server
 from ClientHandler import ClientHandler
 from PlayerInfo import PlayerInfo
 from Map.MapServer import MapServer
-from constants import TILE_SIZE, ROUNDS_TO_WIN_GAME
+from constants import TILE_SIZE, ROUNDS_TO_WIN_GAME, RESET_ROUND_TIME
 
 
 class GameServer(Server):
     channelClass = ClientHandler
-    idArray = [0, 0, 0]
+    idArray = []
     playersInfoArray = []
     playersPointsArray = []
 
@@ -19,6 +19,7 @@ class GameServer(Server):
         self.players = WeakKeyDictionary()
         print('Server launched')
         self.map = MapServer()
+        self.idArray = [0, 0, 0]
         self.playersPointsArray = [0, 0, 0]
 
     def addPlayer(self, channel):
@@ -132,9 +133,7 @@ class GameServer(Server):
             sleep(0.0001)
 
     def resetRound(self):
-        sleep(2)
-        print("Resetting round")
-        # self.map = MapServer()
+        sleep(RESET_ROUND_TIME)
         for i in range(0, len(self.playersInfoArray)):
             self.playersInfoArray[i]["x"] = TILE_SIZE
             self.playersInfoArray[i]["y"] = TILE_SIZE

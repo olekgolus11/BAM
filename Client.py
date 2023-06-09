@@ -185,7 +185,6 @@ class Client(ConnectionListener):
 
     def runGame(self):
         self.update()
-        # self.updatePlayerMap()
         self.handlePlayerHit()
         self.drawRoundScoreMessage()
         if self.player.alive is True:
