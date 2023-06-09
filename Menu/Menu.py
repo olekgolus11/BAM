@@ -137,12 +137,12 @@ class Menu:
             pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
 
             seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-            secondsText = getFont(50).render(str(10-int(seconds)), True, "white")
+            secondsText = getFont(50).render(str(SECONDS_TO_START_GAME-int(seconds)), True, "white")
             secondsRect = secondsText.get_rect(center=(CENTER_X_POS, CIRCLE_Y_POS))
 
             self.screen.blit(secondsText, secondsRect)
 
-            if seconds > 1:
+            if seconds > SECONDS_TO_START_GAME:
                 runningTimer = False
 
             for event in pygame.event.get():
