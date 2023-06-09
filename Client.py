@@ -175,6 +175,8 @@ class Client(ConnectionListener):
             self.handlePlayerHit()
             if self.player.alive is True:
                 self.player.run()
+            else:
+                self.player.drawYouDied()
             self.drawAllPlayers()
             self.drawBoard()
             self.sendPlayerInfo()
