@@ -15,6 +15,8 @@ class Client(ConnectionListener):
     map = None
     menu = None
     score = None
+    isRoundOver = None
+    isRoundWon = None
 
     def __init__(self, host, port):
         self.menu = Menu()
@@ -23,7 +25,9 @@ class Client(ConnectionListener):
         self.Connect((host, port))
         self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen), Player(60, 120, 3, self.screen)]
         self.imagePathArray = {"1": "", "2": "", "3": ""}
+        self.isRoundOver = False
         print("Client started")
+
 
     def Network_message(self, data):
         print("got:", data['message'])
@@ -45,6 +49,8 @@ class Client(ConnectionListener):
                     self.imagePathArray[str(player.playerId)] = playerInfoElement["imagePath"]
 
     def Network_resetPlayersInfo(self, data):
+        self.isRoundOver = False
+        self.isRoundWon = None
         playersInfo = data["playersInfo"]
         for playerInfoElement in playersInfo:
             for player in self.playersArray:
@@ -84,9 +90,25 @@ class Client(ConnectionListener):
     def Network_pointToWinner(self, data):
         print("You won!")
         self.score += 1
+        connection.Pump()
+        self.Pump()
+
+    def Network_roundOver(self, data):
+        print("Round over!")
+        print("Winner id: ", data["winnerId"])
+        connection.Pump()
+        self.Pump()
+        self.isRoundOver = True
+        if self.player.playerId == data["winnerId"]:
+            self.isRoundWon = True
 
     def PlayerDead(self):
         connection.Send({"action": "playerDead", "playerId": self.player.playerId})
+
+    def drawRoundScoreMessage(self):
+        if self.isRoundWon is True:
+            print('kurwa wygralem!')
+            self.player.drawYouWon()
 
     def setupWindow(self):
         pygame.init()
@@ -173,6 +195,7 @@ class Client(ConnectionListener):
             self.update()
             # self.updatePlayerMap()
             self.handlePlayerHit()
+            self.drawRoundScoreMessage()
             if self.player.alive is True:
                 self.player.run()
             else:

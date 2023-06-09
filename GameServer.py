@@ -88,6 +88,13 @@ class GameServer(Server):
         playerChannel = self.playersInfoArray[self.getWinner() - 1]["channel"]
         playerChannel.PointToWinner()
 
+    def sendRoundOverToAllPlayers(self):
+        for i in range(0, len(self.playersInfoArray)):
+            playerChannel = self.playersInfoArray[i]["channel"]
+            playerChannel.RoundOver()
+            self.Pump()
+            playerChannel.Pump()
+
     def sendBoardToPlayer(self, channel):
         channel.Board(self.map.board)
 
