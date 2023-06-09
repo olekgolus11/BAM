@@ -17,8 +17,10 @@ class Client(ConnectionListener):
     score = None
     isRoundOver = None
     isRoundWon = None
+    running_menu = None
 
     def __init__(self, host, port):
+        self.running_menu = True
         self.menu = Menu()
         self.score = 0
         self.setupWindow()
@@ -99,6 +101,16 @@ class Client(ConnectionListener):
         if self.player.playerId == data["winnerId"]:
             self.isRoundWon = True
 
+    def Network_resetGame(self, data):
+        self.isRoundOver = False
+        self.isRoundWon = None
+        self.score = 0
+        self.running_menu = True
+        self.player.bombsHandler.bombs = []
+        self.player.bombsHandler.myBombs = []
+        connection.Pump()
+        self.Pump()
+
     def PlayerDead(self):
         connection.Send({"action": "playerDead", "playerId": self.player.playerId})
 
@@ -172,8 +184,8 @@ class Client(ConnectionListener):
 
     def run(self):
         menuState = MenuState.MENU
-        running_menu = True
-        while running_menu:
+        self.running_menu = True
+        while self.running_menu:
             self.update()
             self.sendPlayerInfo()
             if menuState == MenuState.LOBBY:
@@ -183,7 +195,7 @@ class Client(ConnectionListener):
                 menuState = MenuState.LOBBY
             if self.allPlayersJoined():
                 self.menu.showCountDownTimer()
-                running_menu = False
+                self.running_menu = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

@@ -5,7 +5,7 @@ from PodSixNet.Server import Server
 from ClientHandler import ClientHandler
 from PlayerInfo import PlayerInfo
 from Map.MapServer import MapServer
-from constants import TILE_SIZE
+from constants import TILE_SIZE, ROUNDS_TO_WIN_GAME
 
 
 class GameServer(Server):
@@ -93,6 +93,11 @@ class GameServer(Server):
             playerChannel = self.playersInfoArray[i]["channel"]
             playerChannel.RoundOver()
 
+    def sendResetGameToAllPlayers(self):
+        for i in range(0, len(self.playersInfoArray)):
+            playerChannel = self.playersInfoArray[i]["channel"]
+            playerChannel.ResetGame()
+
     def sendBoardToPlayer(self, channel):
         channel.Board(self.map.board)
 
@@ -102,6 +107,16 @@ class GameServer(Server):
             if self.playersInfoArray[i]["alive"] is True:
                 alivePlayers += 1
         return alivePlayers <= 1
+
+    def isGameOver(self):
+        for i in range(0, len(self.playersPointsArray)):
+            if self.playersPointsArray[i] == ROUNDS_TO_WIN_GAME:
+                return True
+        return False
+
+    def resetGame(self):
+        self.playersPointsArray = [0, 0, 0]
+        self.sendResetGameToAllPlayers()
 
     def Connected(self, channel, addr):
         print(channel, "Channel connected")
