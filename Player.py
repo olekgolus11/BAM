@@ -42,9 +42,14 @@ class Player:
         rect = text.get_rect(center=(CENTER_X_POS, CENTER_Y_POS))
         self.screen.blit(text, rect)
 
-
-
-
+    def drawYouWon(self):
+        surface_alpha = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        surface_alpha_gray = surface_alpha.convert_alpha()
+        surface_alpha_gray.fill((0, 0, 0, 128))
+        self.screen.blit(surface_alpha_gray, (0, 0))
+        text = getFont(70).render("YOU WON THE ROUND", True, "green")
+        rect = text.get_rect(center=(CENTER_X_POS, CENTER_Y_POS))
+        self.screen.blit(text, rect)
 
     def run(self):
         keyPressed = pygame.key.get_pressed()

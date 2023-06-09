@@ -31,6 +31,9 @@ class ClientHandler(Channel):
     def ResetPlayersInfo(self, data):
         self.Send({"action": "resetPlayersInfo", "playersInfo": data})
 
+    def RoundOver(self):
+        self.Send({"action": "roundOver", "winnerId": self._server.getWinner()})
+
     def Message(self, data):
         self.Send({"action": "message", "message": data})
 
@@ -55,6 +58,7 @@ class ClientHandler(Channel):
         self._server.playersInfoArray[data["playerId"] - 1]["alive"] = False
         if self._server.isRoundOver():
             # TODO: Handle adding points to player
+            self._server.sendRoundOverToAllPlayers()
             self._server.addPointToWinner()
             self._server.resetRound()
         print(self._server.playersPointsArray)
