@@ -163,6 +163,8 @@ class Player:
     def isPlayerNearTheBlock(self, direction: Direction):
         tileY, tileX = getTileCoordinates(self.y, self.x)
         isTileABlock = self.map.isNextTileABlock(tileY, tileX, direction)
+        if isTileABlock is False:
+            isTileABlock = self.isNextTileABomb(tileY, tileX, direction)
         if direction == Direction.LEFT and isTileABlock:
             return self.isPositionedMoreLeftThanRight()
         elif direction == Direction.RIGHT and isTileABlock:
@@ -174,6 +176,24 @@ class Player:
         else:
             return False
 
+    def checkForBomb(self, y, x):
+        for bomb in self.bombsHandler.everyPlayersBombs:
+            bombY, bombX = getTileCoordinates(bomb.y, bomb.x)
+            if bombX == x and bombY == y:
+                return True
+        return False
+
+    def isNextTileABomb(self, y, x, direction: Direction):
+        if direction == Direction.LEFT:
+            return self.checkForBomb(y, x - 1)
+        elif direction == Direction.RIGHT:
+            return self.checkForBomb(y, x + 1)
+        elif direction == Direction.UP:
+            return self.checkForBomb(y - 1, x)
+        elif direction == Direction.DOWN:
+            return self.checkForBomb(y + 1, x)
+        else:
+            return False
     def isPositionedMoreUpThanDown(self):
         return self.isPositionedOnFirstHalfOfTileInSelectedAxis(self.y - 1)
 

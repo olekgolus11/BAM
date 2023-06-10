@@ -55,6 +55,9 @@ class ClientHandler(Channel):
     def Board(self, data):
         self.Send({"action": "board", "board": data})
 
+    def Seed(self, seed):
+        self.Send({"action": "seed", "seed": seed})
+
     def PointToWinner(self):
         self.Send({"action": "pointToWinner", "winner": True})
         self.Pump()
