@@ -226,7 +226,6 @@ class Client(ConnectionListener):
             menuState = MenuState.LOBBY
         if self.allPlayersJoined():
             self.startCountdown()
-            self.shouldLoadSong = True
             self.menu.showCountDownTimer()
             self.running_menu = False
         for event in pygame.event.get():
