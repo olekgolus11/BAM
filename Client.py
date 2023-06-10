@@ -6,6 +6,7 @@ from Map.MapClient import MapClient
 from Player import Player
 from Menu.Menu import Menu
 from utilities import MenuState
+from constants import PORT
 
 
 class Client(ConnectionListener):
@@ -17,19 +18,25 @@ class Client(ConnectionListener):
     score = None
     isRoundOver = None
     isRoundWon = None
-    running_menu = None
+    runningMenu = None
+    menuState = None
 
     def __init__(self, host, port):
-        self.running_menu = True
+        self.setupWindow()
+        self.runningMenu = True
+        self.menuState = MenuState.MENU
         self.menu = Menu()
         self.score = 0
-        self.setupWindow()
-        self.Connect((host, port))
+        self.host = host
+        self.port = port
         self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen),
                              Player(60, 120, 3, self.screen)]
         self.imagePathArray = {"1": "", "2": "", "3": ""}
         self.isRoundOver = False
         print("Client started")
+
+    def connectClient(self):
+        self.Connect((self.host, self.port))
 
     def Network_message(self, data):
         print("got:", data['message'])
@@ -106,7 +113,7 @@ class Client(ConnectionListener):
         self.isRoundOver = False
         self.isRoundWon = None
         self.score = 0
-        self.running_menu = True
+        self.runningMenu = True
         self.player.bombsHandler.bombs = []
         self.player.bombsHandler.myBombs = []
         connection.Pump()
@@ -185,7 +192,6 @@ class Client(ConnectionListener):
 
     def runGame(self):
         self.update()
-        # self.updatePlayerMap()
         self.handlePlayerHit()
         self.drawRoundScoreMessage()
         if self.player.alive is True:
@@ -199,26 +205,27 @@ class Client(ConnectionListener):
         self.handleBombs()
 
     def runMenu(self):
-        menuState = MenuState.MENU
         self.update()
         self.sendPlayerInfo()
-        if menuState == MenuState.LOBBY:
-            self.menu.showLobby()
-            self.drawPlayersInLobby()
+        if self.menuState == MenuState.LOBBY:
+            if self.menu.showLobby() == MenuState.MENU:
+                self.menuState = MenuState.MENU
+            else:
+                self.drawPlayersInLobby()
         elif self.menu.showMenu() == MenuState.LOBBY:
-            menuState = MenuState.LOBBY
+            self.menuState = MenuState.LOBBY
         if self.allPlayersJoined():
             self.menu.showCountDownTimer()
-            self.running_menu = False
+            self.runningMenu = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
     def run(self):
-        self.running_menu = True
+        self.runningMenu = True
         running = True
         while running:
-            if self.running_menu:
+            if self.runningMenu:
                 self.runMenu()
             else:
                 self.runGame()
@@ -228,7 +235,9 @@ class Client(ConnectionListener):
         pygame.quit()
 
 
-client = Client("localhost", 3000)
+client = Client("", PORT)
+client.host = client.menu.showJoinScreen()
+client.connectClient()
 # TODO: Change spinlock to something better
 client.setupWindow()
 while client.player is None:

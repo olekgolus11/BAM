@@ -1,5 +1,4 @@
 import pygame
-
 from constants import TILE_SIZE
 from enum import Enum
 

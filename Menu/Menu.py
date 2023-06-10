@@ -116,29 +116,97 @@ class Menu:
             pygame.draw.circle(self.screen, "green", (PLAYER_THREE_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
             self.screen.blit(playerImage, (PLAYER_THREE_X_POS - AVATAR_PADDING, CIRCLE_Y_POS - AVATAR_PADDING))
 
-    def showLobby(self):
+    def showLobbyBackground(self):
         self.drawBackground()
         self.drawMenuText()
 
         self.drawPlayersTexts()
         self.drawCircles()
-
         self.drawAllPlayersInLobby()
 
-        pygame.display.update()
+    def showLobby(self):
+        self.showLobbyBackground()
+        mousePos = pygame.mouse.get_pos()
+
+        backButton = Button(pos=(CENTER_X_POS, JOIN_BACK_BUTTON_Y_POS), textInput="BACK", font=getFont(50),
+                            baseColor="white", hoveringColor="red")
+
+        backButton.changeColor(mousePos)
+        backButton.update(self.screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if backButton.checkForInput(mousePos):
+                    return MenuState.MENU
+
+    def drawTextField(self, textFieldRect, color):
+        pygame.draw.rect(self.screen, color, textFieldRect)
+
+    def drawInput(self, text):
+        inputText = getFont(13).render(text, True, "black")
+        inputRect = inputText.get_rect(center=(CENTER_X_POS, 330))
+        self.screen.blit(inputText, inputRect)
+
+    def showJoinScreen(self):
+        textField = pygame.Rect(CENTER_X_POS-TEXTFIELD_WIDTH/2, TEXTFIELD_Y_POS, TEXTFIELD_WIDTH, TEXTFIELD_HEIGHT)
+        input = ''
+        textFieldActive = False
+        joinScreenRunning = True
+
+        joinButton = Button(pos=(CENTER_X_POS, JOIN_BACK_BUTTON_Y_POS), textInput="JOIN", font=getFont(50),
+                            baseColor="white", hoveringColor="red")
+
+        while joinScreenRunning:
+            self.drawBackground()
+            self.drawMenuText()
+
+            if textFieldActive:
+                textFieldColor = "green"
+            else:
+                textFieldColor = "purple"
+
+            mousePos = pygame.mouse.get_pos()
+            joinButton.changeColor(mousePos)
+            joinButton.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if textField.collidepoint(mousePos):
+                        textFieldActive = True
+                    else:
+                        textFieldActive = False
+                        if joinButton.checkForInput(mousePos):
+                            return input
+                if event.type == pygame.KEYDOWN:
+                    if textFieldActive:
+                        if event.key == pygame.K_BACKSPACE:
+                            input = input[:-1]
+                        else:
+                            input += event.unicode
+
+            self.drawTextField(textField, textFieldColor)
+            self.drawInput(input)
+            pygame.display.update()
 
     def showCountDownTimer(self):
         start_ticks = pygame.time.get_ticks()
         runningTimer = True
+        for i in range(0, len(self.playersLobbyDraw)):
+            self.playersLobbyDraw[i] = True
         while runningTimer:
-            self.drawBackground()
-            self.drawMenuText()
+            self.showLobbyBackground()
 
-            pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, CIRCLE_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
+            pygame.draw.circle(self.screen, "purple", (PLAYER_TWO_X_POS, COUNTER_Y_POS), CIRCLE_RADIUS, CIRCLE_RADIUS)
 
             seconds = (pygame.time.get_ticks() - start_ticks) / 1000
             secondsText = getFont(50).render(str(SECONDS_TO_START_GAME-int(seconds)), True, "white")
-            secondsRect = secondsText.get_rect(center=(CENTER_X_POS, CIRCLE_Y_POS))
+            secondsRect = secondsText.get_rect(center=(CENTER_X_POS, COUNTER_Y_POS))
 
             self.screen.blit(secondsText, secondsRect)
 
