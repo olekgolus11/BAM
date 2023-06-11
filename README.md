@@ -6,7 +6,7 @@ Used for graphics, sounds and input handling. It is one of the most popular Pyth
 #### [PodSixNet](https://www.pygame.org/project-PodSixNet-1069-.html)
 Used for networking. It makes writing a client-server application much easier without having to worry about sockets and other low-level stuff.
 
-## How to run a game?
+## How to run the game?
 In order to start playing the game you have to:
 1. Run the `GameServer.py` on one of the computers
 2. Input the host ip (we recommend using hamachi for this) or leave it empty to run the server locally
