@@ -188,6 +188,8 @@ class Menu:
                     if textFieldActive:
                         if event.key == pygame.K_BACKSPACE:
                             input = input[:-1]
+                        elif event.key == pygame.K_RETURN:
+                            return input
                         else:
                             input += event.unicode
 

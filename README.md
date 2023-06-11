@@ -8,9 +8,9 @@ Used for networking. It makes writing a client-server application much easier wi
 
 ## How to run the game?
 In order to start playing the game you have to:
-1. Run the `GameServer.py` on one of the computers
+1. Run the `GameServer.exe` on one of the computers
 2. Input the host ip (we recommend using hamachi for this) or leave it empty to run the server locally
-3. Run `Client.py` for 3 players and input either host ip, or `localhost` if server is ran locally
+3. Run `Client.exe` for 3 players and input either host ip, or `localhost` if server is run locally
 4. Have fun!
 
 ## Game rules 📜
