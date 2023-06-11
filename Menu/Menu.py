@@ -197,6 +197,31 @@ class Menu:
             self.drawInput(input)
             pygame.display.update()
 
+    def showStats(self, playersPointsArray):
+        playerOneImage = pygame.image.load(LOBBY_PLAYER_IMAGE_1)
+        self.screen.blit(playerOneImage, (PLAYER_ONE_X_POS - AVATAR_PADDING, 663))
+
+        playerTwoImage = pygame.image.load(LOBBY_PLAYER_IMAGE_2)
+        self.screen.blit(playerTwoImage, (PLAYER_TWO_X_POS - AVATAR_PADDING, 663))
+
+        playerThreeImage = pygame.image.load(LOBBY_PLAYER_IMAGE_3)
+        self.screen.blit(playerThreeImage, (PLAYER_THREE_X_POS - AVATAR_PADDING, 663))
+
+        playerOneText = getFont(25).render(str(playersPointsArray[0]), True, "white")
+        playerOneRect = playerOneText.get_rect(center=(PLAYER_ONE_X_POS + 50, 690))
+
+        self.screen.blit(playerOneText, playerOneRect)
+
+        playerTwoText = getFont(25).render(str(playersPointsArray[1]), True, "white")
+        playerTwoRect = playerTwoText.get_rect(center=(PLAYER_TWO_X_POS + 50, 690))
+
+        self.screen.blit(playerTwoText, playerTwoRect)
+
+        playerThreeText = getFont(25).render(str(playersPointsArray[2]), True, "white")
+        playerThreeRect = playerOneText.get_rect(center=(PLAYER_THREE_X_POS + 50, 690))
+
+        self.screen.blit(playerThreeText, playerThreeRect)
+
     def showCountDownTimer(self):
         start_ticks = pygame.time.get_ticks()
         runningTimer = True

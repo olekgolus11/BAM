@@ -87,6 +87,11 @@ class GameServer(Server):
         self.playersPointsArray[self.getWinner() - 1] += 1
         self.sendPointToWinner()
 
+    def sendPlayersPoints(self):
+        for i in range(0, len(self.playersInfoArray)):
+            playerChannel = self.playersInfoArray[i]["channel"]
+            playerChannel.PlayersPoints()
+
     def sendPointToWinner(self):
         playerChannel = self.playersInfoArray[self.getWinner() - 1]["channel"]
         playerChannel.PointToWinner()
