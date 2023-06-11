@@ -159,5 +159,8 @@ class GameServer(Server):
 
 
 # get command line argument of server, port
-s = GameServer(localaddr=('localhost', PORT))
+address = input("Input server address, or leave empty to run locally: ")
+if not address:
+    address = 'localhost'
+s = GameServer(localaddr=(address, PORT))
 s.launch()
