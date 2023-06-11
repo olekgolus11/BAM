@@ -162,5 +162,6 @@ class GameServer(Server):
 address = input("Input server address, or leave empty to run locally: ")
 if not address:
     address = 'localhost'
+print(f"Starting server on {address}:{PORT}")
 s = GameServer(localaddr=(address, PORT))
 s.launch()

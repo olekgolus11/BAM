@@ -287,6 +287,7 @@ class Client(ConnectionListener):
 
 client = Client("", PORT)
 client.host = client.menu.showJoinScreen()
+print(client.host)
 client.connectClient()
 # TODO: Change spinlock to something better
 client.setupWindow()
