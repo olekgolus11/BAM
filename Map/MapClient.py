@@ -100,11 +100,11 @@ class MapClient(Map):
 
     def dropLootFromCrate(self):
         drop = random.randint(1, 100)
-        if drop <= 50:
+        if drop <= 75:
             return FLOOR
-        elif 50 < drop <= 70:
+        elif 75 < drop <= 85:
             return MORE_BOMBS
-        elif 70 < drop <= 90:
+        elif 85 < drop <= 95:
             return MORE_POWER
         else:
             return MORE_SPEED
