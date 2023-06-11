@@ -1,5 +1,7 @@
 from __future__ import print_function
-from sys import exit
+
+import sys
+
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
@@ -18,6 +20,7 @@ class Client(ConnectionListener):
     score = None
     isRoundOver = None
     isRoundWon = None
+    playersPointsArray = None
     runningMenu = None
     menuState = None
     seed = None
@@ -33,6 +36,7 @@ class Client(ConnectionListener):
         self.playersArray = [Player(PLAYER_1_X_POS, PLAYER_1_Y_POS, 1, self.screen),
                              Player(PLAYER_2_X_POS, PLAYER_2_Y_POS, 2, self.screen),
                              Player(PLAYER_3_X_POS, PLAYER_3_Y_POS, 3, self.screen)]
+        self.playersPointsArray = [0, 0, 0]
         self.shouldLoadSong = True
         self.imagePathArray = {"1": "", "2": "", "3": ""}
         self.isRoundOver = False
@@ -97,7 +101,7 @@ class Client(ConnectionListener):
 
     def Network_disconnected(self, data):
         print('Server disconnected')
-        exit()
+        sys.exit()
 
     def Network_bombFromServer(self, data):
         connection.Pump()
@@ -109,6 +113,9 @@ class Client(ConnectionListener):
         self.score += 1
         connection.Pump()
         self.Pump()
+
+    def Network_playersPoints(self, data):
+        self.playersPointsArray = data["score"]
 
     def Network_roundOver(self, data):
         self.player.resetPlayerPowers()
@@ -249,6 +256,7 @@ class Client(ConnectionListener):
         self.drawBoard()
         self.sendPlayerInfo()
         self.handleBombs()
+        self.menu.showStats(self.playersPointsArray)
 
     def runMenu(self):
         menuState = MenuState.MENU

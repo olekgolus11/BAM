@@ -41,6 +41,7 @@ class MapClient(Map):
             return self.TOP_WALL
 
     def draw(self):
+        self.screen.fill('black')
         for row in range(self.HEIGHT):
             for col in range(self.WIDTH):
                 block = self.getBlock(row, col)

@@ -58,13 +58,18 @@ class ClientHandler(Channel):
         self.Send({"action": "pointToWinner", "winner": True})
         self.Pump()
 
+    def PlayersPoints(self):
+        self.Send({"action": "playersPoints", "score": self._server.playersPointsArray})
+        self.Pump()
+
     def Network_playerDead(self, data):
         self._server.playersInfoArray[data["playerId"] - 1]["alive"] = False
         if self._server.isRoundOver():
-            # TODO: Handle adding points to player
             self._server.sendRoundOverToAllPlayers()
             self._server.addPointToWinner()
+            self._server.sendPlayersPoints()
             self._server.resetRound()
         if self._server.isGameOver():
             self._server.resetGame()
+            self._server.sendPlayersPoints()
 

@@ -3,6 +3,7 @@ from Menu.Button import Button
 from constants import *
 from utilities import MenuState
 from utilities import getFont
+import sys
 
 
 class Menu:
@@ -92,7 +93,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if backButton.checkForInput(mousePos):
                         return
@@ -137,7 +138,7 @@ class Menu:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if backButton.checkForInput(mousePos):
                     return MenuState.MENU
@@ -175,24 +176,51 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if textField.collidepoint(mousePos):
                         textFieldActive = True
                     else:
                         textFieldActive = False
                         if joinButton.checkForInput(mousePos):
-                            return input
+                            return input if input != '' else 'localhost'
                 if event.type == pygame.KEYDOWN:
                     if textFieldActive:
                         if event.key == pygame.K_BACKSPACE:
                             input = input[:-1]
+                        elif event.key == pygame.K_RETURN:
+                            return input if input != '' else 'localhost'
                         else:
                             input += event.unicode
 
             self.drawTextField(textField, textFieldColor)
             self.drawInput(input)
             pygame.display.update()
+
+    def showStats(self, playersPointsArray):
+        playerOneImage = pygame.image.load(LOBBY_PLAYER_IMAGE_1)
+        self.screen.blit(playerOneImage, (PLAYER_ONE_X_POS - AVATAR_PADDING, 663))
+
+        playerTwoImage = pygame.image.load(LOBBY_PLAYER_IMAGE_2)
+        self.screen.blit(playerTwoImage, (PLAYER_TWO_X_POS - AVATAR_PADDING, 663))
+
+        playerThreeImage = pygame.image.load(LOBBY_PLAYER_IMAGE_3)
+        self.screen.blit(playerThreeImage, (PLAYER_THREE_X_POS - AVATAR_PADDING, 663))
+
+        playerOneText = getFont(25).render(str(playersPointsArray[0]), True, "white")
+        playerOneRect = playerOneText.get_rect(center=(PLAYER_ONE_X_POS + 50, 690))
+
+        self.screen.blit(playerOneText, playerOneRect)
+
+        playerTwoText = getFont(25).render(str(playersPointsArray[1]), True, "white")
+        playerTwoRect = playerTwoText.get_rect(center=(PLAYER_TWO_X_POS + 50, 690))
+
+        self.screen.blit(playerTwoText, playerTwoRect)
+
+        playerThreeText = getFont(25).render(str(playersPointsArray[2]), True, "white")
+        playerThreeRect = playerOneText.get_rect(center=(PLAYER_THREE_X_POS + 50, 690))
+
+        self.screen.blit(playerThreeText, playerThreeRect)
 
     def showCountDownTimer(self):
         start_ticks = pygame.time.get_ticks()
@@ -216,7 +244,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
             pygame.display.update()
 
@@ -241,7 +269,7 @@ class Menu:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if playButton.checkForInput(mousePos):
                     return MenuState.LOBBY
@@ -249,7 +277,7 @@ class Menu:
                     self.rules()
                 elif quitButton.checkForInput(mousePos):
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
         pygame.display.update()
 
