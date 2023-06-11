@@ -137,7 +137,7 @@ class Client(ConnectionListener):
         if not self.isRoundOver:
             return
         if self.isRoundWon is True:
-            self.player.drawYouWon()
+            self.player.drawYouWon(self.score)
         self.player.drawScore(self.score)
 
     def setupWindow(self):
