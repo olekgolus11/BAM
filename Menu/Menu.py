@@ -183,13 +183,13 @@ class Menu:
                     else:
                         textFieldActive = False
                         if joinButton.checkForInput(mousePos):
-                            return input
+                            return input if input != '' else 'localhost'
                 if event.type == pygame.KEYDOWN:
                     if textFieldActive:
                         if event.key == pygame.K_BACKSPACE:
                             input = input[:-1]
                         elif event.key == pygame.K_RETURN:
-                            return input
+                            return input if input != '' else 'localhost'
                         else:
                             input += event.unicode
 
