@@ -14,9 +14,9 @@ In order to start playing the game you have to:
 4. Have fun!
 
 ## Game rules 📜
-- Each player starts with the same amount of bombs (3)
+- Each player starts with the same amount of bombs (1)
 - Each player places a bomb in order to destroy crates from which items drop, and to kill other players
-- Items dropped from crates include powerups for speed, bomb range, or temporary immunity to explosions
+- Items dropped from crates include powerups for speed, bomb range and bomb count
 - Each game consists of 3 players
 - The map consists of indestructible walls in order to make the game more interesting
 
