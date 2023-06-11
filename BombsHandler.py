@@ -11,15 +11,16 @@ class BombsHandler:
     playerTileX = None
     playerTileY = None
     seed = None
+
     def __init__(self, mapFromPlayer: MapClient):
         self.map = mapFromPlayer
         self.everyPlayersBombs = []
         self.myBombs = []
         self.bombPlantedThisRound = None
         self.isBombPlantedThisRound = False
-        self.maxBombsPlanted = 3
+        self.maxBombsPlanted = 1
         self.myBombsPlanted = 0
-        self.bombRange = 3
+        self.bombRange = 2
 
     def updateSeed(self, seed):
         self.seed = seed
@@ -152,5 +153,3 @@ class BombsHandler:
             else:
                 self.myBombs.remove(bomb)
                 self.myBombsPlanted -= 1
-
-
