@@ -6,6 +6,13 @@ Used for graphics, sounds and input handling. It is one of the most popular Pyth
 #### [PodSixNet](https://www.pygame.org/project-PodSixNet-1069-.html)
 Used for networking. It makes writing a client-server application much easier without having to worry about sockets and other low-level stuff.
 
+## How to run a game?
+In order to start playing the game you have to:
+1. Run the `GameServer.py` on one of the computers
+2. Input the host ip (we recommend using hamachi for this) or leave it empty to run the server locally
+3. Run `Client.py` for 3 players and input either host ip, or `localhost` if server is ran locally
+4. Have fun!
+
 ## Game rules 📜
 - Each player starts with the same amount of bombs (3)
 - Each player places a bomb in order to destroy crates from which items drop, and to kill other players
