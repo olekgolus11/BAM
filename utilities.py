@@ -1,10 +1,16 @@
 import pygame
+import random
+
 from constants import TILE_SIZE
 from enum import Enum
 
 
 def getTileCoordinates(y, x):
     return (y + TILE_SIZE // 2) // TILE_SIZE, (x + TILE_SIZE // 2) // TILE_SIZE
+
+
+def generateSeed():
+    return random.randint(100000, 999999)
 
 
 def getFont(size):

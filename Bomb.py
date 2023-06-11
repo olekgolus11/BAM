@@ -89,7 +89,6 @@ class Bomb:
             if self.map.isTileACrate(i, tileX):
                 self.map.destroyCrate(i, tileX)
 
-
     def getBombImage(self):
         if self.timer <= FIRST_BOMB_STATE:
             return BOMB_IMAGE_1

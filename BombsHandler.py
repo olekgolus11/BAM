@@ -10,6 +10,7 @@ from utilities import getTileCoordinates
 class BombsHandler:
     playerTileX = None
     playerTileY = None
+    seed = None
 
     def __init__(self, mapFromPlayer: MapClient):
         self.map = mapFromPlayer
@@ -17,9 +18,12 @@ class BombsHandler:
         self.myBombs = []
         self.bombPlantedThisRound = None
         self.isBombPlantedThisRound = False
-        self.maxBombsPlanted = 3
+        self.maxBombsPlanted = 1
         self.myBombsPlanted = 0
-        self.bombRange = 3
+        self.bombRange = 2
+
+    def updateSeed(self, seed):
+        self.seed = seed
 
     def updatePlayerTilePosition(self, x, y):
         self.playerTileY, self.playerTileX = getTileCoordinates(y, x)
@@ -149,5 +153,3 @@ class BombsHandler:
             else:
                 self.myBombs.remove(bomb)
                 self.myBombsPlanted -= 1
-
-

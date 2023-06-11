@@ -5,9 +5,8 @@ from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
 from Player import Player
 from Menu.Menu import Menu
-from utilities import MenuState
-from constants import PORT
-
+from constants import PORT, MORE_BOMBS, MORE_SPEED, MORE_POWER, FLOOR
+from utilities import MenuState, getTileCoordinates
 
 class Client(ConnectionListener):
     player = None
@@ -20,6 +19,7 @@ class Client(ConnectionListener):
     isRoundWon = None
     runningMenu = None
     menuState = None
+    seed = None
 
     def __init__(self, host, port):
         self.setupWindow()
@@ -80,6 +80,10 @@ class Client(ConnectionListener):
 
     def Network_board(self, data):
         self.map.updateBoard(data['board'])
+        connection.Pump()
+
+    def Network_seed(self, data):
+        self.player.bombsHandler.map.updateSeed(data["seed"])
         connection.Pump()
 
     def Network_connected(self, data):
@@ -154,6 +158,25 @@ class Client(ConnectionListener):
     def drawBoard(self):
         self.player.map.draw()
 
+    def handlePowerUp(self):
+        for player in self.playersArray:
+            y, x = getTileCoordinates(player.y, player.x)
+            if self.player.map.board[y][x] == MORE_BOMBS:
+                player.bombsHandler.maxBombsPlanted += 1
+            elif self.player.map.board[y][x] == MORE_POWER:
+                player.bombsHandler.bombRange += 1
+            elif self.player.map.board[y][x] == MORE_SPEED:
+                if player.speed < 6:
+                    self.handlePlayerSpeedUP(player)
+            self.player.map.board[y][x] = FLOOR
+            self.sendBoardToServer()
+
+    def handlePlayerSpeedUP(self, player):
+        player.speed += 1
+        y = player.y // player.speed
+        x = player.x // player.speed
+        player.x = x * player.speed
+        player.y = y * player.speed
     def sendBombToServer(self, bomb):
         connection.Send({"action": "newBombFromPlayer", "bomb": self.player.bombsHandler.bombToDictionary(bomb)})
 
@@ -193,8 +216,10 @@ class Client(ConnectionListener):
 
     def runGame(self):
         self.update()
+        # self.updatePlayerMap()
         self.handlePlayerHit()
         self.drawRoundScoreMessage()
+        self.handlePowerUp()
         if self.player.alive is True:
             self.player.run()
         else:
@@ -221,7 +246,9 @@ class Client(ConnectionListener):
         pygame.mixer.music.load("assets/sounds/countdown.mp3")
         pygame.mixer.music.play()
         self.shouldLoadSong = True
+
     def runMenu(self):
+        menuState = MenuState.MENU
         self.update()
         self.sendPlayerInfo()
         if self.menuState == MenuState.LOBBY:

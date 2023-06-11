@@ -6,6 +6,7 @@ from ClientHandler import ClientHandler
 from PlayerInfo import PlayerInfo
 from Map.MapServer import MapServer
 from constants import TILE_SIZE, ROUNDS_TO_WIN_GAME, RESET_ROUND_TIME, PORT
+from utilities import generateSeed
 
 
 class GameServer(Server):
@@ -21,6 +22,7 @@ class GameServer(Server):
         self.map = MapServer()
         self.idArray = [0, 0, 0]
         self.playersPointsArray = [0, 0, 0]
+        self.seed = generateSeed()
 
     def addPlayer(self, channel):
         playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel, "")
@@ -95,12 +97,17 @@ class GameServer(Server):
             playerChannel.RoundOver()
 
     def sendResetGameToAllPlayers(self):
+        self.seed = generateSeed()
         for i in range(0, len(self.playersInfoArray)):
             playerChannel = self.playersInfoArray[i]["channel"]
             playerChannel.ResetGame()
+            self.sendSeed(playerChannel)
 
     def sendBoardToPlayer(self, channel):
         channel.Board(self.map.board)
+
+    def sendSeed(self, channel):
+        channel.Seed(self.seed)
 
     def isRoundOver(self):
         alivePlayers = 0
@@ -124,7 +131,7 @@ class GameServer(Server):
         self.addPlayer(channel)
         self.sendInfoToPlayer(channel)
         self.sendBoardToPlayer(channel)
-        channel.Send({"action": "board", "board": self.map.board})
+        self.sendSeed(channel)
 
     def launch(self):
         while True:
@@ -134,6 +141,7 @@ class GameServer(Server):
 
     def resetRound(self):
         sleep(RESET_ROUND_TIME)
+        #TODO: Add map resetting
         for i in range(0, len(self.playersInfoArray)):
             self.playersInfoArray[i]["x"] = TILE_SIZE
             self.playersInfoArray[i]["y"] = TILE_SIZE
