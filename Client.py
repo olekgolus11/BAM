@@ -1,5 +1,7 @@
 from __future__ import print_function
-from sys import exit
+
+import sys
+
 import pygame
 from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
@@ -97,7 +99,7 @@ class Client(ConnectionListener):
 
     def Network_disconnected(self, data):
         print('Server disconnected')
-        exit()
+        sys.exit()
 
     def Network_bombFromServer(self, data):
         connection.Pump()

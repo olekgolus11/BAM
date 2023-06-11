@@ -3,6 +3,7 @@ from Menu.Button import Button
 from constants import *
 from utilities import MenuState
 from utilities import getFont
+import sys
 
 
 class Menu:
@@ -92,7 +93,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if backButton.checkForInput(mousePos):
                         return
@@ -137,7 +138,7 @@ class Menu:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if backButton.checkForInput(mousePos):
                     return MenuState.MENU
@@ -175,7 +176,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if textField.collidepoint(mousePos):
                         textFieldActive = True
@@ -216,7 +217,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
             pygame.display.update()
 
@@ -241,7 +242,7 @@ class Menu:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if playButton.checkForInput(mousePos):
                     return MenuState.LOBBY
@@ -249,7 +250,7 @@ class Menu:
                     self.rules()
                 elif quitButton.checkForInput(mousePos):
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
         pygame.display.update()
 
