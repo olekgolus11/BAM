@@ -100,6 +100,7 @@ class Client(ConnectionListener):
         exit()
 
     def Network_bombFromServer(self, data):
+        connection.Pump()
         for player in self.playersArray:
             if player.playerId == self.player.playerId:
                 player.bombsHandler.dictionaryToBomb(data["bomb"])
@@ -184,6 +185,7 @@ class Client(ConnectionListener):
 
     def sendBombToServer(self, bomb):
         connection.Send({"action": "newBombFromPlayer", "bomb": self.player.bombsHandler.bombToDictionary(bomb)})
+        connection.Pump()
 
     def handleBombPlantedThisRound(self):
         if self.player.bombsHandler.bombPlantedThisRound:
