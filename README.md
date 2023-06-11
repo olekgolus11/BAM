@@ -10,7 +10,7 @@ Used for networking. It makes writing a client-server application much easier wi
 In order to start playing the game you have to:
 1. Run the `GameServer.exe` on one of the computers
 2. Input the host ip (we recommend using hamachi for this) or leave it empty to run the server locally
-3. Run `Client.exe` for 3 players and input either host ip, or `localhost` if server is run locally
+3. Run `Client.exe` for 3 players and input either host ip, or leave the input empty if server is run locally
 4. Have fun!
 
 ## Game rules 📜
@@ -32,6 +32,3 @@ In order to start playing the game you have to:
 - Each player breaks crates in order to get to other players and to get powerups or play however they want
 - After each round ends, another one starts if no player has won 5 rounds in total
 - After the game ends, players return to the game lobby
-
-## Other 👉
-- Players can press TAB to see the current game state
