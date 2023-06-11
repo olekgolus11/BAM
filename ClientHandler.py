@@ -47,13 +47,9 @@ class ClientHandler(Channel):
             playerChannel = self._server.playersInfoArray[i]["channel"]
             playerChannel.Send({"action": "bombFromServer", "bomb": data["bomb"]})
 
-    def Network_boardToServer(self, data):
-        for i in range(0, len(self._server.playersInfoArray)):
-            playerChannel = self._server.playersInfoArray[i]["channel"]
-            playerChannel.Board(data["board"])
-
     def Board(self, data):
         self.Send({"action": "board", "board": data})
+        self.Pump()
 
     def Seed(self, seed):
         self.Send({"action": "seed", "seed": seed})

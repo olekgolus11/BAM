@@ -62,6 +62,10 @@ class Player:
         self.updatePlayerAnimationState()
         self.handlePlayerBomb(keyPressed)
 
+    def resetPlayerPowers(self):
+        self.speed = 3
+        self.bombsHandler = BombsHandler(self.map)
+
     def isPlayerHit(self):
         self.bombsHandler.updatePlayerTilePosition(self.x, self.y)
         if self.bombsHandler.didBombExplodeOnPlayer() is True:

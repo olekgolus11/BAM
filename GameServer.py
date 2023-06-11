@@ -5,7 +5,7 @@ from PodSixNet.Server import Server
 from ClientHandler import ClientHandler
 from PlayerInfo import PlayerInfo
 from Map.MapServer import MapServer
-from constants import TILE_SIZE, ROUNDS_TO_WIN_GAME, RESET_ROUND_TIME, PORT
+from constants import *
 from utilities import generateSeed
 
 
@@ -139,12 +139,19 @@ class GameServer(Server):
             self.Pump()
             sleep(0.0001)
 
+    def getPlayerStartingPosition(self, playerId):
+        if playerId == 1:
+            return [PLAYER_1_X_POS, PLAYER_1_Y_POS]
+        elif playerId == 2:
+            return [PLAYER_2_X_POS, PLAYER_2_Y_POS]
+        elif playerId == 3:
+            return [PLAYER_3_X_POS, PLAYER_3_Y_POS]
+
     def resetRound(self):
         sleep(RESET_ROUND_TIME)
-        #TODO: Add map resetting
+        self.map = MapServer()
         for i in range(0, len(self.playersInfoArray)):
-            self.playersInfoArray[i]["x"] = TILE_SIZE
-            self.playersInfoArray[i]["y"] = TILE_SIZE
+            self.playersInfoArray[i]["x"], self.playersInfoArray[i]["y"] = self.getPlayerStartingPosition(i + 1)
             self.playersInfoArray[i]["alive"] = True
         for i in range(0, len(self.playersInfoArray)):
             self.playersInfoArray[i]["channel"].Board(self.map.board)
