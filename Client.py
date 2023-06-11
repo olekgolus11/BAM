@@ -31,6 +31,7 @@ class Client(ConnectionListener):
         self.port = port
         self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen),
                              Player(60, 120, 3, self.screen)]
+        self.shouldLoadSong = True
         self.imagePathArray = {"1": "", "2": "", "3": ""}
         self.isRoundOver = False
         print("Client started")
@@ -204,6 +205,22 @@ class Client(ConnectionListener):
         self.sendBoardToServer()
         self.handleBombs()
 
+    def startSong(self):
+        pygame.mixer.music.load("assets/sounds/menu_music.mp3")
+        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.play(-1)
+
+    def startInGameSong(self):
+        if self.shouldLoadSong is True:
+            pygame.mixer.music.load("assets/sounds/ingame_music.mp3")
+            pygame.mixer.music.set_volume(0.3)
+            pygame.mixer.music.play(-1)
+            self.shouldLoadSong = False
+
+    def startCountdown(self):
+        pygame.mixer.music.load("assets/sounds/countdown.mp3")
+        pygame.mixer.music.play()
+        self.shouldLoadSong = True
     def runMenu(self):
         self.update()
         self.sendPlayerInfo()
@@ -215,6 +232,7 @@ class Client(ConnectionListener):
         elif self.menu.showMenu() == MenuState.LOBBY:
             self.menuState = MenuState.LOBBY
         if self.allPlayersJoined():
+            self.startCountdown()
             self.menu.showCountDownTimer()
             self.runningMenu = False
         for event in pygame.event.get():
@@ -224,10 +242,12 @@ class Client(ConnectionListener):
     def run(self):
         self.runningMenu = True
         running = True
+        self.startSong()
         while running:
             if self.runningMenu:
                 self.runMenu()
             else:
+                self.startInGameSong()
                 self.runGame()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
