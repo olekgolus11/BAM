@@ -5,8 +5,9 @@ from PodSixNet.Connection import connection, ConnectionListener
 from Map.MapClient import MapClient
 from Player import Player
 from Menu.Menu import Menu
-from constants import PORT, MORE_BOMBS, MORE_SPEED, MORE_POWER, FLOOR
+from constants import *
 from utilities import MenuState, getTileCoordinates
+
 
 class Client(ConnectionListener):
     player = None
@@ -29,8 +30,9 @@ class Client(ConnectionListener):
         self.score = 0
         self.host = host
         self.port = port
-        self.playersArray = [Player(60, 60, 1, self.screen), Player(120, 60, 2, self.screen),
-                             Player(60, 120, 3, self.screen)]
+        self.playersArray = [Player(PLAYER_1_X_POS, PLAYER_1_Y_POS, 1, self.screen),
+                             Player(PLAYER_2_X_POS, PLAYER_2_Y_POS, 2, self.screen),
+                             Player(PLAYER_3_X_POS, PLAYER_3_Y_POS, 3, self.screen)]
         self.shouldLoadSong = True
         self.imagePathArray = {"1": "", "2": "", "3": ""}
         self.isRoundOver = False
@@ -98,6 +100,7 @@ class Client(ConnectionListener):
         exit()
 
     def Network_bombFromServer(self, data):
+        connection.Pump()
         for player in self.playersArray:
             if player.playerId == self.player.playerId:
                 player.bombsHandler.dictionaryToBomb(data["bomb"])
@@ -108,11 +111,13 @@ class Client(ConnectionListener):
         self.Pump()
 
     def Network_roundOver(self, data):
+        self.player.resetPlayerPowers()
         connection.Pump()
         self.Pump()
         self.isRoundOver = True
         if self.player.playerId == data["winnerId"]:
             self.isRoundWon = True
+        self.updatePlayerMap()
 
     def Network_resetGame(self, data):
         self.isRoundOver = False
@@ -123,6 +128,7 @@ class Client(ConnectionListener):
         self.player.bombsHandler.myBombs = []
         connection.Pump()
         self.Pump()
+        self.updatePlayerMap()
 
     def PlayerDead(self):
         connection.Send({"action": "playerDead", "playerId": self.player.playerId})
@@ -131,7 +137,7 @@ class Client(ConnectionListener):
         if not self.isRoundOver:
             return
         if self.isRoundWon is True:
-            self.player.drawYouWon()
+            self.player.drawYouWon(self.score)
         self.player.drawScore(self.score)
 
     def setupWindow(self):
@@ -169,7 +175,6 @@ class Client(ConnectionListener):
                 if player.speed < 6:
                     self.handlePlayerSpeedUP(player)
             self.player.map.board[y][x] = FLOOR
-            self.sendBoardToServer()
 
     def handlePlayerSpeedUP(self, player):
         player.speed += 1
@@ -177,8 +182,10 @@ class Client(ConnectionListener):
         x = player.x // player.speed
         player.x = x * player.speed
         player.y = y * player.speed
+
     def sendBombToServer(self, bomb):
         connection.Send({"action": "newBombFromPlayer", "bomb": self.player.bombsHandler.bombToDictionary(bomb)})
+        connection.Pump()
 
     def handleBombPlantedThisRound(self):
         if self.player.bombsHandler.bombPlantedThisRound:
@@ -186,10 +193,8 @@ class Client(ConnectionListener):
             self.player.bombsHandler.bombPlantedThisRound = None
 
     def updatePlayerMap(self):
+        self.Pump()
         self.player.map.updateBoard(self.map.board)
-
-    def sendBoardToServer(self):
-        connection.Send({"action": "boardToServer", "board": self.player.map.board})
 
     def handleBombs(self):
         for player in self.playersArray:
@@ -214,22 +219,6 @@ class Client(ConnectionListener):
             return True
         return False
 
-    def runGame(self):
-        self.update()
-        # self.updatePlayerMap()
-        self.handlePlayerHit()
-        self.drawRoundScoreMessage()
-        self.handlePowerUp()
-        if self.player.alive is True:
-            self.player.run()
-        else:
-            self.player.drawYouDied()
-        self.drawAllPlayers()
-        self.drawBoard()
-        self.sendPlayerInfo()
-        self.sendBoardToServer()
-        self.handleBombs()
-
     def startSong(self):
         pygame.mixer.music.load("assets/sounds/menu_music.mp3")
         pygame.mixer.music.set_volume(0.3)
@@ -246,6 +235,20 @@ class Client(ConnectionListener):
         pygame.mixer.music.load("assets/sounds/countdown.mp3")
         pygame.mixer.music.play()
         self.shouldLoadSong = True
+
+    def runGame(self):
+        self.update()
+        self.handlePlayerHit()
+        self.drawRoundScoreMessage()
+        self.handlePowerUp()
+        if self.player.alive is True:
+            self.player.run()
+        else:
+            self.player.drawYouDied()
+        self.drawAllPlayers()
+        self.drawBoard()
+        self.sendPlayerInfo()
+        self.handleBombs()
 
     def runMenu(self):
         menuState = MenuState.MENU
@@ -284,6 +287,7 @@ class Client(ConnectionListener):
 
 client = Client("", PORT)
 client.host = client.menu.showJoinScreen()
+print(client.host)
 client.connectClient()
 # TODO: Change spinlock to something better
 client.setupWindow()
