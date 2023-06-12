@@ -159,6 +159,10 @@ class Menu:
         joinButton = Button(pos=(CENTER_X_POS, JOIN_BACK_BUTTON_Y_POS), textInput="JOIN", font=getFont(50),
                             baseColor="white", hoveringColor="red")
 
+        mainText = getFont(17).render("Input ip or leave it blank to run the game locally", True, "purple")
+        mainRect = mainText.get_rect(center=(CENTER_X_POS, 250))
+
+
         while joinScreenRunning:
             self.drawBackground()
             self.drawMenuText()
@@ -193,6 +197,7 @@ class Menu:
                             input += event.unicode
 
             self.drawTextField(textField, textFieldColor)
+            self.screen.blit(mainText, mainRect)
             self.drawInput(input)
             pygame.display.update()
 
