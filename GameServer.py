@@ -1,4 +1,6 @@
 from __future__ import print_function
+
+import sys
 from time import sleep
 from weakref import WeakKeyDictionary
 from PodSixNet.Server import Server
@@ -14,6 +16,7 @@ class GameServer(Server):
     idArray = []
     playersInfoArray = []
     playersPointsArray = []
+    playersConnected = None
 
     def __init__(self, *args, **kwargs):
         Server.__init__(self, *args, **kwargs)
@@ -23,8 +26,10 @@ class GameServer(Server):
         self.idArray = [0, 0, 0]
         self.playersPointsArray = [0, 0, 0]
         self.seed = generateSeed()
+        self.playersConnected = 0
 
     def addPlayer(self, channel):
+        self.playersConnected += 1
         playerInfo = PlayerInfo(TILE_SIZE, TILE_SIZE, self.getNewId(), channel, "")
         playerInfo.imagePath = self.getPlayerImagePath(playerInfo.id)
         self.playersInfoArray.append(
@@ -43,6 +48,12 @@ class GameServer(Server):
             if self.idArray[i] == 0:
                 self.idArray[i] = 1
                 return i + 1
+
+    def sendKilledPlayer(self, playerId):
+        for i in range(0, len(self.playersInfoArray)):
+            if i + 1 == playerId:
+                continue
+            self.playersInfoArray[i]["channel"].KillPlayer(playerId)
 
     def delPlayer(self, channel):
         for i in range(0, len(self.playersInfoArray)):
@@ -138,8 +149,20 @@ class GameServer(Server):
         self.sendBoardToPlayer(channel)
         self.sendSeed(channel)
 
+    def isOnePlayerLeft(self):
+        return self.playersConnected == 1
+
+    def disconnectAllPlayers(self):
+        for i in range(0, len(self.playersInfoArray)):
+            playerChannel = self.playersInfoArray[i]["channel"]
+            playerChannel.Disconnect()
+            playerChannel.Pump()
+
     def launch(self):
         while True:
+            if len(self.playersInfoArray) == 3 and self.isOnePlayerLeft():
+                self.disconnectAllPlayers()
+                sys.exit()
             self.sendAllPlayersDataToAll()
             self.Pump()
             sleep(0.0001)

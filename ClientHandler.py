@@ -5,8 +5,11 @@ class ClientHandler(Channel):
 
     def __init__(self, *args, **kwargs):
         Channel.__init__(self, *args, **kwargs)
+        self.playerId = None
 
     def Close(self):
+        self._server.playersConnected -= 1
+        self._server.sendKilledPlayer(self.playerId)
         print(self, 'Client disconnected')
 
     def Network_message(self, data):
@@ -22,6 +25,7 @@ class ClientHandler(Channel):
                 break
 
     def PlayerInfo(self, playerData):
+        self.playerId = playerData["id"]
         self.Send({"action": "playerInfo", "playerInfo":
             {"id": playerData["id"], "x": playerData["x"], "y": playerData["y"], "imagePath": playerData["imagePath"]}})
 
@@ -33,6 +37,11 @@ class ClientHandler(Channel):
 
     def RoundOver(self):
         self.Send({"action": "roundOver", "winnerId": self._server.getWinner()})
+        self.Pump()
+
+    def KillPlayer(self, playerId):
+        self._server.playersInfoArray[playerId - 1]["alive"] = False
+        self.Send({"action": "killPlayer", "playerId": playerId})
         self.Pump()
 
     def ResetGame(self):
