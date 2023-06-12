@@ -50,6 +50,10 @@ class Client(ConnectionListener):
         connection.Send(data)
         connection.Pump()
 
+    def Network_killPlayer(self, data):
+        print("delete player")
+        self.playersArray[data["playerId"] - 1].alive = False
+
     def sendPlayerInfo(self):
         connection.Send({"action": "playerInfo", "playerInfo":
             {"id": self.player.playerId, "x": self.player.x, "y": self.player.y,
@@ -101,6 +105,8 @@ class Client(ConnectionListener):
 
     def Network_disconnected(self, data):
         print('Server disconnected')
+        connection.Close()
+        print("Disconnected from the server")
         sys.exit()
 
     def Network_bombFromServer(self, data):
@@ -289,6 +295,10 @@ class Client(ConnectionListener):
                 self.runGame()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.player.alive = False
+                    self.sendPlayerInfo()
+                    self.PlayerDead()
+                    connection.Pump()
                     running = False
         pygame.quit()
 
